@@ -1,16 +1,13 @@
 
 import React from 'react'
 
-const ListCollection = ({ name, items, ...props }) => (
+const ListCollection = ({ items, ...props }) => (
   <section data-name='ListCollection'>
-    <h2 className='black' children={name} />
+    <h2 className='black' children='title' />
     <ul className='black'>
       {items.map((item, i) => (
         <li key={i} className='black'>
-          <a href={item.href} className='black'>
-            <span className="black">{item.name}</span>
-            <span className="black">{item.description}</span>
-          </a>
+          <span children='{item.title}' className='db b'/>
         </li>
       ))}
     </ul>

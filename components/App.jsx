@@ -100,6 +100,7 @@ export default class App extends React.Component {
         }}>
         <style dangerouslySetInnerHTML={{ __html: css }} />
         <Headers i={0} {...this.props} />
+        <Collections i={0} {...collections[0]} />
         <Footers i={0} {...this.props} />
       </div>
 
