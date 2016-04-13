@@ -88,6 +88,10 @@ export default class App extends React.Component {
       a { color: ${colors.primary}; }
       .svg-fill { fill: currentColor; }
       .b--color { border-color: ${colors.border};
+      .bg-color { background-color: ${colors.base}; }
+      .color    { color: ${colors.primary}; }
+      .bg-transparent { background-color: transparent; }
+      .focus-transparent:focus { outline: 0; }
     `
 
     return (
@@ -98,7 +102,7 @@ export default class App extends React.Component {
         <style dangerouslySetInnerHTML={{ __html: css }} />
         <Headers i={0} {...this.props} />
         <SearchBars i={0} {...this.props} />
-        <Collections i={0} {...collections[0]} />
+        <Collections i={collection} {...collections[0]} />
         <Footers i={0} {...this.props} />
       </div>
 

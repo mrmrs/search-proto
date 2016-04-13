@@ -8,7 +8,7 @@ const DetailListCollection = ({ name, items, ...props }) => (
       {items.map((item, i) => (
         <li key={i} className='dt w-100 pv3 bt b--color'>
           <div className='dtc v-mid mw4'>
-            <img src={item.source.cloudinary_id} className='db w-100 mw-100' />
+            <img src={item.source.cloudinary_id} className='db dim w-100 mw-100' />
           </div>
           <div className='dtc v-mid pl3'>
             <div>Name</div>

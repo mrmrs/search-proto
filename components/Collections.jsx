@@ -5,12 +5,14 @@ import ListCollection from './collections/ListCollection'
 import DetailListCollection from './collections/DetailListCollection'
 import GridCollection from './collections/GridCollection'
 import ChromelessGridCollection from './collections/ChromelessGridCollection'
+import ChromelessTightGridCollection from './collections/ChromelessTightGridCollection'
 
 export const collections = [
   GridCollection,
   ListCollection,
   DetailListCollection,
   ChromelessGridCollection,
+  ChromelessTightGridCollection
 ]
 
 class Collections extends React.Component {

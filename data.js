@@ -13,7 +13,7 @@ const data = {
     },
     collections: [
     {
-      name: 'Items',
+      name: 'Search Results',
       items: [
       {
         "_index": "picfair-pic-development-picfair_development_201603_20160331-110500",
