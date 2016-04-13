@@ -9,7 +9,7 @@ import palettes from '../color-palettes'
 
 import Headers, { headers } from './Headers'
 import Footers, { footers } from './Footers'
-import Collections, { collections } from './Collections'
+import Collections from './Collections'
 import SearchBars, { searchbars } from './SearchBars'
 
 import Heading from './Heading'
@@ -21,7 +21,7 @@ const defaults = {
     base: '#fff',
     highlight: '#0cf',
     border: 'transparent',
-  }
+  },
 }
 
 function randomHex () {
@@ -35,7 +35,12 @@ function getColor () {
   return palette[key]
 }
 
+
+
 export default class App extends React.Component {
+
+  showGrid () { this.setState({ collection: 1 }) }
+  showList () { this.setState({ collection: 0 }) }
 
   constructor () {
     super()
@@ -49,7 +54,11 @@ export default class App extends React.Component {
       footer: 0,
       dark: false
     }
+    this.showGrid = this.showGrid.bind(this)
+    this.showList = this.showList.bind(this)
   }
+
+
 
   componentDidMount () {
     const palette = palettes[random(palettes.length - 1)]
@@ -69,7 +78,6 @@ export default class App extends React.Component {
       },
       header: random(headers.length - 1),
       footer: random(footers.length - 1),
-      collection: random(collections.length - 1),
       searchbar: random(searchbars.length - 1),
       // randoms: Object.keys(this.props).map((key, i) =>)
       // dark
@@ -79,7 +87,7 @@ export default class App extends React.Component {
 
   render() {
 
-    const { collections } = this.props
+    const { collectionsList } = this.props
     const { colors, searchbar, header, nav, collection, footer, dark } = this.state
 
     const reverse = random(1) == 1
@@ -101,8 +109,8 @@ export default class App extends React.Component {
         }}>
         <style dangerouslySetInnerHTML={{ __html: css }} />
         <Headers i={0} {...this.props} />
-        <SearchBars i={0} {...this.props} />
-        <Collections i={collection} {...collections[0]} />
+        <SearchBars i={0} {...this.props} showGrid={this.showGrid} showList={this.showList} />
+        <Collections i={0} {...collectionsList[0]} />
         <Footers i={0} {...this.props} />
       </div>
 

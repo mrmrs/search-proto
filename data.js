@@ -11,7 +11,7 @@ const data = {
       copyright: "copyright 2016"
 
     },
-    collections: [
+    collectionsList: [
     {
       name: 'Search Results',
       items: [
