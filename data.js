@@ -3,8 +3,8 @@ const data = {
   picfair: {
     header: {
       title: "picfair",
-      logo: "/img/logo.png",
-      avatar: "/img/avatar.gif",
+      logo: "/assets/logo.png",
+      avatar: "/assets/avatar.gif",
     },
     footer: {
       title: "picfair",
