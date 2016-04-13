@@ -8,6 +8,7 @@ const ListCollection = ({ items, ...props }) => (
       {items.map((item, i) => (
         <li key={i} className='black'>
           <span children={item.source.title} className='db b'/>
+          <img src={item.source.cloudinary_id} className='db'/>
         </li>
       ))}
     </ul>
