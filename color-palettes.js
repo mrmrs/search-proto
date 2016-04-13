@@ -37,26 +37,14 @@ const brewercolors = keys.map((key) => {
 
 const palettes = [
   {
-    primary: '#222222',
-    base: '#ffffee',
+    primary: '#111111',
+    base: '#ffffff',
     highlight: '#3c99aa',
     border:  'rgba(34,34,34,.1)'
   },
   {
-    primary: '#001f3f',
-    base: '#7fdbff',
-    highlight: '#ddd',
-    border:  'rgba(0,31,63,.1)'
-  },
-  {
-    primary: '#ddd',
-    base: '#0074D9',
-    highlight: '#ddd',
-    border:  'rgba(238,238,238,.1)'
-  },
-  {
-    primary: '#85144B',
-    base: '#eeeeee',
+    primary: '#eeeeee',
+    base: '#111111',
     highlight: '#3c99aa',
     border:  'rgba(133,20,75,.1)'
   }
