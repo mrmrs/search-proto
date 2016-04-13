@@ -6,6 +6,11 @@ const data = {
       logo: "/img/logo.png",
       avatar: "/img/avatar.gif",
     },
+    footer: {
+      title: "picfair",
+      copyright: "copyright 2016"
+
+    },
     collections: [
     {
       name: 'Items',

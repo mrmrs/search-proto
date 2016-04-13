@@ -99,7 +99,8 @@ export default class App extends React.Component {
           backgroundColor: colors.base
         }}>
         <style dangerouslySetInnerHTML={{ __html: css }} />
-        <Headers i={header} {...this.props} />
+        <Headers i={0} {...this.props} />
+        <Footers i={0} {...this.props} />
       </div>
 
     )
