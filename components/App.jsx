@@ -64,12 +64,6 @@ export default class App extends React.Component {
         base,
         highlight,
         border,
-        // inverse: dark ? '#000' : '#fff',
-        // accent: Color(color)
-        //   .rotate(72)
-        //   .lighten(dark ? .5 : 0)
-        //   .darken(dark ? 0 : .5)
-        //   .hexString()
       },
       header: random(headers.length - 1),
       footer: random(footers.length - 1),
