@@ -2,7 +2,7 @@
 import React from 'react'
 
 const ListCollection = ({ items, ...props }) => (
-  <section data-name='ListCollection'>
+  <section data-name='ListCollection' className='pa4'>
     <h2 className='black' children='title' />
     <ul className='list pl0 ml0'>
       {items.map((item, i) => (
