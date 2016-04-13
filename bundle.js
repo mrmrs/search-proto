@@ -53,8 +53,19 @@
 
 /******/ 	
 /******/ 	
+/******/ 	// Copied from https://github.com/facebook/react/blob/bef45b0/src/shared/utils/canDefineProperty.js
+/******/ 	var canDefineProperty = false;
+/******/ 	try {
+/******/ 		Object.defineProperty({}, "x", {
+/******/ 			get: function() {}
+/******/ 		});
+/******/ 		canDefineProperty = true;
+/******/ 	} catch(x) {
+/******/ 		// IE will fail on defineProperty
+/******/ 	}
+/******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "0f2a0636e5663695b583"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "86948be8f47de458d78f"; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentParents = []; // eslint-disable-line no-unused-vars
 /******/ 	
@@ -77,7 +88,7 @@
 /******/ 		};
 /******/ 		for(var name in __webpack_require__) {
 /******/ 			if(Object.prototype.hasOwnProperty.call(__webpack_require__, name)) {
-/******/ 				if(Object.defineProperty) {
+/******/ 				if(canDefineProperty) {
 /******/ 					Object.defineProperty(fn, name, (function(name) {
 /******/ 						return {
 /******/ 							configurable: true,
@@ -120,7 +131,7 @@
 /******/ 				}
 /******/ 			});
 /******/ 		}
-/******/ 		if(Object.defineProperty) {
+/******/ 		if(canDefineProperty) {
 /******/ 			Object.defineProperty(fn, "e", {
 /******/ 				enumerable: true,
 /******/ 				value: ensure
@@ -601,12 +612,12 @@
 
 	var _componentsApp2 = _interopRequireDefault(_componentsApp);
 
-	var _data = __webpack_require__(218);
+	var _data = __webpack_require__(200);
 
 	var div = document.createElement('div');
 	document.body.appendChild(div);
 
-	_reactDom2['default'].render(_react2['default'].createElement(_componentsApp2['default'], _data.mrmrs), div);
+	_reactDom2['default'].render(_react2['default'].createElement(_componentsApp2['default'], _data.picfair), div);
 
 	/* REACT HOT LOADER */ }).call(this); } finally { if (true) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = __webpack_require__(184); if (makeExportsHot(module, __webpack_require__(66))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "entry.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)(module)))
@@ -7397,6 +7408,10 @@
 	  }
 	};
 
+	function registerNullComponentID() {
+	  ReactEmptyComponentRegistry.registerNullComponentID(this._rootNodeID);
+	}
+
 	var ReactEmptyComponent = function (instantiate) {
 	  this._currentElement = null;
 	  this._rootNodeID = null;
@@ -7405,7 +7420,7 @@
 	assign(ReactEmptyComponent.prototype, {
 	  construct: function (element) {},
 	  mountComponent: function (rootID, transaction, context) {
-	    ReactEmptyComponentRegistry.registerNullComponentID(rootID);
+	    transaction.getReactMountReady().enqueue(registerNullComponentID, this);
 	    this._rootNodeID = rootID;
 	    return ReactReconciler.mountComponent(this._renderedComponent, rootID, transaction, context);
 	  },
@@ -19671,7 +19686,7 @@
 
 	'use strict';
 
-	module.exports = '0.14.7';
+	module.exports = '0.14.8';
 
 /***/ },
 /* 159 */
@@ -20949,23 +20964,19 @@
 
 	var _Headers2 = _interopRequireDefault(_Headers);
 
-	var _Footers = __webpack_require__(199);
+	var _Footers = __webpack_require__(190);
 
 	var _Footers2 = _interopRequireDefault(_Footers);
 
-	var _Articles = __webpack_require__(204);
-
-	var _Articles2 = _interopRequireDefault(_Articles);
-
-	var _Collections = __webpack_require__(209);
+	var _Collections = __webpack_require__(193);
 
 	var _Collections2 = _interopRequireDefault(_Collections);
 
-	var _Heading = __webpack_require__(216);
+	var _Heading = __webpack_require__(198);
 
 	var _Heading2 = _interopRequireDefault(_Heading);
 
-	var _Text = __webpack_require__(217);
+	var _Text = __webpack_require__(199);
 
 	var _Text2 = _interopRequireDefault(_Text);
 
@@ -21000,7 +21011,6 @@
 	      colors: defaults.colors,
 	      randoms: [],
 	      header: 0,
-	      article: 0,
 	      nav: 0,
 	      collection: 0,
 	      footer: 0,
@@ -21038,8 +21048,7 @@
 	        //   .hexString()
 	        header: (0, _lodash.random)(_Headers.headers.length - 1),
 	        footer: (0, _lodash.random)(_Footers.footers.length - 1),
-	        collection: (0, _lodash.random)(_Collections.collections.length - 1),
-	        article: (0, _lodash.random)(_Articles.articles.length - 1)
+	        collection: (0, _lodash.random)(_Collections.collections.length - 1)
 	      };
 	      // randoms: Object.keys(this.props).map((key, i) =>)
 	      // dark
@@ -21051,7 +21060,6 @@
 	      var collections = this.props.collections;
 	      var _state = this.state;
 	      var colors = _state.colors;
-	      var article = _state.article;
 	      var header = _state.header;
 	      var nav = _state.nav;
 	      var collection = _state.collection;
@@ -21069,11 +21077,7 @@
 	            backgroundColor: colors.base
 	          } },
 	        _react2['default'].createElement('style', { dangerouslySetInnerHTML: { __html: css } }),
-	        _react2['default'].createElement(_Headers2['default'], _extends({ i: header }, this.props)),
-	        _react2['default'].createElement(_Articles2['default'], _extends({ i: article }, this.props)),
-	        _react2['default'].createElement(_Collections2['default'], _extends({ i: collection }, collections[0])),
-	        _react2['default'].createElement(_Collections2['default'], _extends({ i: 1 }, collections[1])),
-	        _react2['default'].createElement(_Footers2['default'], _extends({ i: footer }, this.props))
+	        _react2['default'].createElement(_Headers2['default'], _extends({ i: header }, this.props))
 	      );
 	    }
 	  }]);
@@ -21083,9 +21087,6 @@
 
 	exports['default'] = App;
 	module.exports = exports['default'];
-	/*collections.map((c, i) => (
-	 <Collections key={i} i={collection} {...c} />
-	))*/
 
 	/* REACT HOT LOADER */ }).call(this); } finally { if (true) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = __webpack_require__(184); if (makeExportsHot(module, __webpack_require__(66))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "App.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)(module)))
@@ -35450,59 +35451,17 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _headersBigDescriptionHeader = __webpack_require__(188);
+	var _headersAltHeader = __webpack_require__(188);
 
-	var _headersBigDescriptionHeader2 = _interopRequireDefault(_headersBigDescriptionHeader);
+	var _headersAltHeader2 = _interopRequireDefault(_headersAltHeader);
 
-	var _headersBigTitleHeader = __webpack_require__(189);
+	var _headersSiteHeader = __webpack_require__(189);
 
-	var _headersBigTitleHeader2 = _interopRequireDefault(_headersBigTitleHeader);
+	var _headersSiteHeader2 = _interopRequireDefault(_headersSiteHeader);
 
-	var _headersHeroHeader = __webpack_require__(190);
-
-	var _headersHeroHeader2 = _interopRequireDefault(_headersHeroHeader);
-
-	var _headersMinimalHeader = __webpack_require__(191);
-
-	var _headersMinimalHeader2 = _interopRequireDefault(_headersMinimalHeader);
-
-	var _headersMinimalHeaderThin = __webpack_require__(192);
-
-	var _headersMinimalHeaderThin2 = _interopRequireDefault(_headersMinimalHeaderThin);
-
-	var _headersMinimalHeaderContrast = __webpack_require__(193);
-
-	var _headersMinimalHeaderContrast2 = _interopRequireDefault(_headersMinimalHeaderContrast);
-
-	var _headersAvatarHeader = __webpack_require__(194);
-
-	var _headersAvatarHeader2 = _interopRequireDefault(_headersAvatarHeader);
-
-	var _headersAvatarTitleHeader = __webpack_require__(195);
-
-	var _headersAvatarTitleHeader2 = _interopRequireDefault(_headersAvatarTitleHeader);
-
-	var _headersAvatarHeaderInline = __webpack_require__(196);
-
-	var _headersAvatarHeaderInline2 = _interopRequireDefault(_headersAvatarHeaderInline);
-
-	var _headersTitleHeader = __webpack_require__(197);
-
-	var _headersTitleHeader2 = _interopRequireDefault(_headersTitleHeader);
-
-	var _headersLargeTitleHeader = __webpack_require__(198);
-
-	var _headersLargeTitleHeader2 = _interopRequireDefault(_headersLargeTitleHeader);
-
-	var headers = [_headersAvatarHeader2['default'], _headersAvatarHeaderInline2['default'], _headersAvatarTitleHeader2['default'], _headersTitleHeader2['default'], _headersLargeTitleHeader2['default']];
+	var headers = [_headersAltHeader2['default'], _headersSiteHeader2['default']];
 
 	exports.headers = headers;
-
-	//MinimalHeader,
-	//MinimalHeaderContrast,
-	//HeroHeader,
-	//BigTitleHeader,
-	//BigDescriptionHeader
 
 	var Headers = (function (_React$Component) {
 	  _inherits(Headers, _React$Component);
@@ -35559,30 +35518,22 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var BigDescriptionHeader = function BigDescriptionHeader(_ref) {
-	  var title = _ref.title;
-	  var description = _ref.description;
-	  var geoLocation = _ref.geoLocation;
+	var AltHeader = function AltHeader(_ref) {
+	  var header = _ref.header;
 
-	  var props = _objectWithoutProperties(_ref, ['title', 'description', 'geoLocation']);
+	  var props = _objectWithoutProperties(_ref, ['header']);
 
 	  return _react2['default'].createElement(
 	    'header',
-	    { 'data-name': 'BigDescriptionHeader', className: 'dt phm phl-ns pvl pvxl-ns' },
-	    _react2['default'].createElement(
-	      'div',
-	      { className: 'dtc v-mid' },
-	      _react2['default'].createElement('h1', { className: 'f2 ttu tracked', children: title }),
-	      _react2['default'].createElement('p', { className: 'f3 measure lh-copy', children: description }),
-	      _react2['default'].createElement('p', { className: 'f4 measure lh-copy', children: geoLocation })
-	    )
+	    { 'data-name': 'AltHeader', className: 'black' },
+	    _react2['default'].createElement('h1', { className: 'black', children: header.title })
 	  );
 	};
 
-	exports['default'] = BigDescriptionHeader;
+	exports['default'] = AltHeader;
 	module.exports = exports['default'];
 
-	/* REACT HOT LOADER */ }).call(this); } finally { if (true) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = __webpack_require__(184); if (makeExportsHot(module, __webpack_require__(66))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "BigDescriptionHeader.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+	/* REACT HOT LOADER */ }).call(this); } finally { if (true) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = __webpack_require__(184); if (makeExportsHot(module, __webpack_require__(66))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "AltHeader.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)(module)))
 
 /***/ },
@@ -35605,439 +35556,26 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var BigTitleHeader = function BigTitleHeader(_ref) {
-	  var title = _ref.title;
-	  var description = _ref.description;
-	  var geoLocation = _ref.geoLocation;
+	var SiteHeader = function SiteHeader(_ref) {
+	  var header = _ref.header;
 
-	  var props = _objectWithoutProperties(_ref, ['title', 'description', 'geoLocation']);
+	  var props = _objectWithoutProperties(_ref, ['header']);
 
 	  return _react2['default'].createElement(
 	    'header',
-	    { 'data-name': 'BigTitleHeader', className: 'phm phl-ns pvl pvxl-ns' },
-	    _react2['default'].createElement('h1', { className: 'f1 mega-ns mtn mbs', children: title }),
-	    _react2['default'].createElement('p', { className: 'f5 mtn mbl measure lh-copy ttu tracked', children: geoLocation }),
-	    _react2['default'].createElement('p', { className: 'f4 f3-ns mtn measure lh-copy', children: description })
+	    { 'data-name': 'SiteHeader', className: 'black' },
+	    _react2['default'].createElement('h1', { className: 'black', children: header.title })
 	  );
 	};
 
-	exports['default'] = BigTitleHeader;
+	exports['default'] = SiteHeader;
 	module.exports = exports['default'];
 
-	/* REACT HOT LOADER */ }).call(this); } finally { if (true) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = __webpack_require__(184); if (makeExportsHot(module, __webpack_require__(66))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "BigTitleHeader.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+	/* REACT HOT LOADER */ }).call(this); } finally { if (true) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = __webpack_require__(184); if (makeExportsHot(module, __webpack_require__(66))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "SiteHeader.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)(module)))
 
 /***/ },
 /* 190 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(module) {/* REACT HOT LOADER */ if (true) { (function () { var ReactHotAPI = __webpack_require__(3), RootInstanceProvider = __webpack_require__(11), ReactMount = __webpack_require__(13), React = __webpack_require__(66); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
-
-	'use strict';
-
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-	function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
-
-	var _react = __webpack_require__(66);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var HeroHeader = function HeroHeader(_ref) {
-	  var title = _ref.title;
-	  var description = _ref.description;
-	  var geoLocation = _ref.geoLocation;
-
-	  var props = _objectWithoutProperties(_ref, ['title', 'description', 'geoLocation']);
-
-	  return _react2['default'].createElement(
-	    'header',
-	    { 'data-name': 'HeroHeader', className: 'tl tc-ns phm phl-ns pvl paxl-ns' },
-	    _react2['default'].createElement(
-	      'div',
-	      null,
-	      _react2['default'].createElement('h1', { className: 'mega fw6 mvn', children: title }),
-	      _react2['default'].createElement('p', { className: 'f4 f3-ns lh-copy measure center mtn', children: description }),
-	      _react2['default'].createElement('p', { className: 'f5 lh-copy', children: geoLocation })
-	    )
-	  );
-	};
-
-	exports['default'] = HeroHeader;
-	module.exports = exports['default'];
-
-	/* REACT HOT LOADER */ }).call(this); } finally { if (true) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = __webpack_require__(184); if (makeExportsHot(module, __webpack_require__(66))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "HeroHeader.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)(module)))
-
-/***/ },
-/* 191 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(module) {/* REACT HOT LOADER */ if (true) { (function () { var ReactHotAPI = __webpack_require__(3), RootInstanceProvider = __webpack_require__(11), ReactMount = __webpack_require__(13), React = __webpack_require__(66); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
-
-	'use strict';
-
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-	function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
-
-	var _react = __webpack_require__(66);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var MinimalHeader = function MinimalHeader(_ref) {
-	  var title = _ref.title;
-	  var description = _ref.description;
-	  var geoLocation = _ref.geoLocation;
-
-	  var props = _objectWithoutProperties(_ref, ['title', 'description', 'geoLocation']);
-
-	  return _react2['default'].createElement(
-	    'header',
-	    { 'data-name': 'MinimalHeader', className: 'pam pal-ns bb b--white-10' },
-	    _react2['default'].createElement('h1', { className: '', children: title }),
-	    _react2['default'].createElement('p', { className: 'lh-copy', children: description }),
-	    _react2['default'].createElement('p', { className: 'f5 lh-copy', children: geoLocation })
-	  );
-	};
-
-	exports['default'] = MinimalHeader;
-	module.exports = exports['default'];
-
-	/* REACT HOT LOADER */ }).call(this); } finally { if (true) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = __webpack_require__(184); if (makeExportsHot(module, __webpack_require__(66))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "MinimalHeader.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)(module)))
-
-/***/ },
-/* 192 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(module) {/* REACT HOT LOADER */ if (true) { (function () { var ReactHotAPI = __webpack_require__(3), RootInstanceProvider = __webpack_require__(11), ReactMount = __webpack_require__(13), React = __webpack_require__(66); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
-
-	'use strict';
-
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-	function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
-
-	var _react = __webpack_require__(66);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var MinimalHeaderThin = function MinimalHeaderThin(_ref) {
-	  var title = _ref.title;
-	  var description = _ref.description;
-	  var geoLocation = _ref.geoLocation;
-
-	  var props = _objectWithoutProperties(_ref, ['title', 'description', 'geoLocation']);
-
-	  return _react2['default'].createElement(
-	    'header',
-	    { 'data-name': 'MinimalHeaderThin', className: 'pam pal-ns bb b--white-10' },
-	    _react2['default'].createElement('h1', { className: 'book ttu tracked mbm', children: title }),
-	    _react2['default'].createElement('p', { className: 'lh-copy', children: description }),
-	    _react2['default'].createElement('p', { className: 'lh-copy', children: geoLocation })
-	  );
-	};
-
-	exports['default'] = MinimalHeaderThin;
-	module.exports = exports['default'];
-
-	/* REACT HOT LOADER */ }).call(this); } finally { if (true) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = __webpack_require__(184); if (makeExportsHot(module, __webpack_require__(66))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "MinimalHeaderThin.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)(module)))
-
-/***/ },
-/* 193 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(module) {/* REACT HOT LOADER */ if (true) { (function () { var ReactHotAPI = __webpack_require__(3), RootInstanceProvider = __webpack_require__(11), ReactMount = __webpack_require__(13), React = __webpack_require__(66); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
-
-	'use strict';
-
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-	function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
-
-	var _react = __webpack_require__(66);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var MinimalHeaderContrast = function MinimalHeaderContrast(_ref) {
-	  var title = _ref.title;
-	  var description = _ref.description;
-	  var geoLocation = _ref.geoLocation;
-
-	  var props = _objectWithoutProperties(_ref, ['title', 'description', 'geoLocation']);
-
-	  return _react2['default'].createElement(
-	    'header',
-	    { 'data-name': 'MinimalHeaderContrast', className: 'phm phl-ns pvl pvxxl-ns' },
-	    _react2['default'].createElement('h1', { className: 'ultra ttu tracked mvn', children: title }),
-	    _react2['default'].createElement('p', { className: 'f3 f2-l lh-title mvm', children: description }),
-	    _react2['default'].createElement('p', { className: 'f4 f3-ns lh-title mvm', children: geoLocation })
-	  );
-	};
-
-	exports['default'] = MinimalHeaderContrast;
-	module.exports = exports['default'];
-
-	/* REACT HOT LOADER */ }).call(this); } finally { if (true) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = __webpack_require__(184); if (makeExportsHot(module, __webpack_require__(66))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "MinimalHeaderContrast.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)(module)))
-
-/***/ },
-/* 194 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(module) {/* REACT HOT LOADER */ if (true) { (function () { var ReactHotAPI = __webpack_require__(3), RootInstanceProvider = __webpack_require__(11), ReactMount = __webpack_require__(13), React = __webpack_require__(66); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
-
-	'use strict';
-
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-	function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
-
-	var _react = __webpack_require__(66);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var AvatarHeader = function AvatarHeader(_ref) {
-	  var title = _ref.title;
-	  var description = _ref.description;
-	  var geoLocation = _ref.geoLocation;
-	  var author = _ref.author;
-
-	  var props = _objectWithoutProperties(_ref, ['title', 'description', 'geoLocation', 'author']);
-
-	  return _react2['default'].createElement(
-	    'header',
-	    { 'data-name': 'AvatarHeader', className: 'pal pvxl-ns bb b--color tc mbxl' },
-	    _react2['default'].createElement(
-	      'div',
-	      { className: 'dib mw5' },
-	      _react2['default'].createElement(
-	        'svg',
-	        { xmlns: 'http://www.w3.org/2000/svg', viewBox: '0 0 32 34', className: 'w-100 db' },
-	        _react2['default'].createElement('path', { fill: 'currentColor',
-	          d: ' M16 7 C13 7 2 9 2 16 C2 23 6 23 10 24 L11 28 L12 26 L20 26 L21 28 L22 24 C26 23 30 23 30 16 C30 9 19 7 16 7 M4 18 A4 4 0 0 1 12 18 A4 4 0 0 1 4 18 M20 18 A4 4 0 0 1 28 18 A4 4 0 0 1 20 18 ' })
-	      )
-	    )
-	  );
-	};
-
-	exports['default'] = AvatarHeader;
-	module.exports = exports['default'];
-
-	/* REACT HOT LOADER */ }).call(this); } finally { if (true) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = __webpack_require__(184); if (makeExportsHot(module, __webpack_require__(66))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "AvatarHeader.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)(module)))
-
-/***/ },
-/* 195 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(module) {/* REACT HOT LOADER */ if (true) { (function () { var ReactHotAPI = __webpack_require__(3), RootInstanceProvider = __webpack_require__(11), ReactMount = __webpack_require__(13), React = __webpack_require__(66); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
-
-	'use strict';
-
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-	function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
-
-	var _react = __webpack_require__(66);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var AvatarTitleHeader = function AvatarTitleHeader(_ref) {
-	  var title = _ref.title;
-	  var author = _ref.author;
-
-	  var props = _objectWithoutProperties(_ref, ['title', 'author']);
-
-	  return _react2['default'].createElement(
-	    'header',
-	    { 'data-name': 'AvatarTitleHeader', className: 'pam pvl-ns bb b--color tc mbxl' },
-	    _react2['default'].createElement(
-	      'div',
-	      { className: 'dib w4' },
-	      _react2['default'].createElement(
-	        'svg',
-	        { xmlns: 'http://www.w3.org/2000/svg', viewBox: '0 0 32 34', className: 'w-100 db' },
-	        _react2['default'].createElement('path', { fill: 'currentColor',
-	          d: ' M16 7 C13 7 2 9 2 16 C2 23 6 23 10 24 L11 28 L12 26 L20 26 L21 28 L22 24 C26 23 30 23 30 16 C30 9 19 7 16 7 M4 18 A4 4 0 0 1 12 18 A4 4 0 0 1 4 18 M20 18 A4 4 0 0 1 28 18 A4 4 0 0 1 20 18 ' })
-	      )
-	    ),
-	    _react2['default'].createElement('h1', { className: 'f3 f1-ns db tracked ttu fw6 mtn mbl', children: title })
-	  );
-	};
-
-	exports['default'] = AvatarTitleHeader;
-	module.exports = exports['default'];
-
-	/* REACT HOT LOADER */ }).call(this); } finally { if (true) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = __webpack_require__(184); if (makeExportsHot(module, __webpack_require__(66))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "AvatarTitleHeader.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)(module)))
-
-/***/ },
-/* 196 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(module) {/* REACT HOT LOADER */ if (true) { (function () { var ReactHotAPI = __webpack_require__(3), RootInstanceProvider = __webpack_require__(11), ReactMount = __webpack_require__(13), React = __webpack_require__(66); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
-
-	'use strict';
-
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-	function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
-
-	var _react = __webpack_require__(66);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var AvatarHeader = function AvatarHeader(_ref) {
-	  var title = _ref.title;
-	  var description = _ref.description;
-	  var geoLocation = _ref.geoLocation;
-	  var author = _ref.author;
-
-	  var props = _objectWithoutProperties(_ref, ['title', 'description', 'geoLocation', 'author']);
-
-	  return _react2['default'].createElement(
-	    'header',
-	    { 'data-name': 'AvatarHeader', className: 'pam phl-ns mbxl bb b--color' },
-	    _react2['default'].createElement(
-	      'div',
-	      { className: 'dt' },
-	      _react2['default'].createElement(
-	        'div',
-	        { className: 'dtc v-mid w2' },
-	        _react2['default'].createElement(
-	          'svg',
-	          { xmlns: 'http://www.w3.org/2000/svg', viewBox: '0 0 32 34', className: 'w-100 db' },
-	          _react2['default'].createElement('path', { fill: 'currentColor',
-	            d: ' M16 7 C13 7 2 9 2 16 C2 23 6 23 10 24 L11 28 L12 26 L20 26 L21 28 L22 24 C26 23 30 23 30 16 C30 9 19 7 16 7 M4 18 A4 4 0 0 1 12 18 A4 4 0 0 1 4 18 M20 18 A4 4 0 0 1 28 18 A4 4 0 0 1 20 18 ' })
-	        )
-	      ),
-	      _react2['default'].createElement(
-	        'div',
-	        { className: 'dtc v-mid' },
-	        _react2['default'].createElement('h1', { className: 'dib tl tracked f3 ttu fw6 mvn plm', children: title })
-	      )
-	    ),
-	    _react2['default'].createElement('div', null)
-	  );
-	};
-
-	exports['default'] = AvatarHeader;
-	module.exports = exports['default'];
-
-	/* REACT HOT LOADER */ }).call(this); } finally { if (true) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = __webpack_require__(184); if (makeExportsHot(module, __webpack_require__(66))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "AvatarHeaderInline.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)(module)))
-
-/***/ },
-/* 197 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(module) {/* REACT HOT LOADER */ if (true) { (function () { var ReactHotAPI = __webpack_require__(3), RootInstanceProvider = __webpack_require__(11), ReactMount = __webpack_require__(13), React = __webpack_require__(66); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
-
-	'use strict';
-
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-	function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
-
-	var _react = __webpack_require__(66);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var TitleHeader = function TitleHeader(_ref) {
-	  var title = _ref.title;
-	  var author = _ref.author;
-
-	  var props = _objectWithoutProperties(_ref, ['title', 'author']);
-
-	  return _react2['default'].createElement(
-	    'header',
-	    { 'data-name': 'TitleHeader', className: 'phm phl-ns pvl bb b--color tl mbxl' },
-	    _react2['default'].createElement('h1', { className: 'f3 f2-ns db tracked ttu fw6 mtn mbn', children: title })
-	  );
-	};
-
-	exports['default'] = TitleHeader;
-	module.exports = exports['default'];
-
-	/* REACT HOT LOADER */ }).call(this); } finally { if (true) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = __webpack_require__(184); if (makeExportsHot(module, __webpack_require__(66))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "TitleHeader.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)(module)))
-
-/***/ },
-/* 198 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(module) {/* REACT HOT LOADER */ if (true) { (function () { var ReactHotAPI = __webpack_require__(3), RootInstanceProvider = __webpack_require__(11), ReactMount = __webpack_require__(13), React = __webpack_require__(66); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
-
-	'use strict';
-
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-	function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
-
-	var _react = __webpack_require__(66);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var LargeTitleHeader = function LargeTitleHeader(_ref) {
-	  var title = _ref.title;
-	  var author = _ref.author;
-
-	  var props = _objectWithoutProperties(_ref, ['title', 'author']);
-
-	  return _react2['default'].createElement(
-	    'header',
-	    { 'data-name': 'LargeTitleHeader', className: 'pam pvxxl-ns bb b--color tc mbxl' },
-	    _react2['default'].createElement('h1', { className: 'f1 mega-ns db tracked ttu fw6 mtn mbn', children: title })
-	  );
-	};
-
-	exports['default'] = LargeTitleHeader;
-	module.exports = exports['default'];
-
-	/* REACT HOT LOADER */ }).call(this); } finally { if (true) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = __webpack_require__(184); if (makeExportsHot(module, __webpack_require__(66))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "LargeTitleHeader.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)(module)))
-
-/***/ },
-/* 199 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(module) {/* REACT HOT LOADER */ if (true) { (function () { var ReactHotAPI = __webpack_require__(3), RootInstanceProvider = __webpack_require__(11), ReactMount = __webpack_require__(13), React = __webpack_require__(66); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
@@ -36062,26 +35600,15 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _footersMinimalFooter = __webpack_require__(200);
+	var _footersSiteFooter = __webpack_require__(191);
 
-	var _footersMinimalFooter2 = _interopRequireDefault(_footersMinimalFooter);
+	var _footersSiteFooter2 = _interopRequireDefault(_footersSiteFooter);
 
-	var _footersAvatarFooter = __webpack_require__(201);
+	var _footersAltFooter = __webpack_require__(192);
 
-	var _footersAvatarFooter2 = _interopRequireDefault(_footersAvatarFooter);
+	var _footersAltFooter2 = _interopRequireDefault(_footersAltFooter);
 
-	var _footersInlineFooter = __webpack_require__(202);
-
-	var _footersInlineFooter2 = _interopRequireDefault(_footersInlineFooter);
-
-	var _footersCenteredAvatarFooter = __webpack_require__(203);
-
-	var _footersCenteredAvatarFooter2 = _interopRequireDefault(_footersCenteredAvatarFooter);
-
-	var footers = [_footersAvatarFooter2['default'], _footersInlineFooter2['default']
-	//CenteredAvatarFooter,
-	//MinimalFooter
-	];
+	var footers = [_footersSiteFooter2['default'], _footersAltFooter2['default']];
 
 	exports.footers = footers;
 
@@ -36121,7 +35648,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)(module)))
 
 /***/ },
-/* 200 */
+/* 191 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(module) {/* REACT HOT LOADER */ if (true) { (function () { var ReactHotAPI = __webpack_require__(3), RootInstanceProvider = __webpack_require__(11), ReactMount = __webpack_require__(13), React = __webpack_require__(66); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
@@ -36140,125 +35667,22 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var MinimalFooter = function MinimalFooter(_ref) {
-	  var title = _ref.title;
-	  var description = _ref.description;
-	  var links = _ref.links;
-
-	  var props = _objectWithoutProperties(_ref, ['title', 'description', 'links']);
-
-	  return _react2['default'].createElement(
-	    'footer',
-	    { 'data-name': 'MinimalFooter', className: 'pam pal-ns bt b--color' },
-	    _react2['default'].createElement('span', { className: 'copyright', children: '© 2018 ' }),
-	    _react2['default'].createElement('span', { className: '', children: title }),
-	    _react2['default'].createElement(
-	      'div',
-	      { className: 'pvm' },
-	      links.map(function (link, i) {
-	        return _react2['default'].createElement(
-	          'a',
-	          { key: i, href: link.href, className: 'link dim pvl prm prl-ns' },
-	          _react2['default'].createElement(
-	            'span',
-	            { className: 'f4 bold' },
-	            link.name
-	          )
-	        );
-	      })
-	    )
-	  );
-	};
-
-	exports['default'] = MinimalFooter;
-	module.exports = exports['default'];
-
-	/* REACT HOT LOADER */ }).call(this); } finally { if (true) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = __webpack_require__(184); if (makeExportsHot(module, __webpack_require__(66))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "MinimalFooter.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)(module)))
-
-/***/ },
-/* 201 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(module) {/* REACT HOT LOADER */ if (true) { (function () { var ReactHotAPI = __webpack_require__(3), RootInstanceProvider = __webpack_require__(11), ReactMount = __webpack_require__(13), React = __webpack_require__(66); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
-
-	'use strict';
-
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-	function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
-
-	var _react = __webpack_require__(66);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var AvatarFooter = function AvatarFooter(_ref) {
-	  var title = _ref.title;
-	  var description = _ref.description;
-	  var author = _ref.author;
-	  var links = _ref.links;
+	var SiteFooter = function SiteFooter(_ref) {
 	  var footer = _ref.footer;
 
-	  var props = _objectWithoutProperties(_ref, ['title', 'description', 'author', 'links', 'footer']);
+	  var props = _objectWithoutProperties(_ref, ['footer']);
 
-	  return _react2['default'].createElement(
-	    'footer',
-	    { 'data-name': 'AvatarFooter', className: 'pam phl-ns pbxl-ns ptl bt b--color' },
-	    _react2['default'].createElement(
-	      'div',
-	      { className: 'dib w2' },
-	      _react2['default'].createElement(
-	        'svg',
-	        { xmlns: 'http://www.w3.org/2000/svg', viewBox: '0 0 32 32', className: 'w-100 db' },
-	        _react2['default'].createElement('path', { fill: 'currentColor',
-	          d: ' M16 7 C13 7 2 9 2 16 C2 23 6 23 10 24 L11 28 L12 26 L20 26 L21 28 L22 24 C26 23 30 23 30 16 C30 9 19 7 16 7 M4 18 A4 4 0 0 1 12 18 A4 4 0 0 1 4 18 M20 18 A4 4 0 0 1 28 18 A4 4 0 0 1 20 18 ' })
-	      )
-	    ),
-	    _react2['default'].createElement(
-	      'div',
-	      { className: 'db' },
-	      _react2['default'].createElement(
-	        'p',
-	        { className: 'measure' },
-	        footer.line1
-	      ),
-	      _react2['default'].createElement(
-	        'p',
-	        { className: 'measure mbn pbn' },
-	        footer.line2
-	      ),
-	      _react2['default'].createElement('a', { href: '{author.email}', className: 'db fw6 link dim f3-ns', children: author.emailText })
-	    ),
-	    _react2['default'].createElement(
-	      'div',
-	      { className: 'mtl' },
-	      links.map(function (link, i) {
-	        return _react2['default'].createElement(
-	          'a',
-	          { key: i, href: link.href, className: 'link dim pvl prm prl-ns' },
-	          _react2['default'].createElement(
-	            'span',
-	            { className: 'f4 bold' },
-	            link.name
-	          )
-	        );
-	      })
-	    )
-	  );
+	  return _react2['default'].createElement('footer', { 'data-name': 'SiteFooter', className: 'black' });
 	};
 
-	exports['default'] = AvatarFooter;
+	exports['default'] = SiteFooter;
 	module.exports = exports['default'];
 
-	/* REACT HOT LOADER */ }).call(this); } finally { if (true) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = __webpack_require__(184); if (makeExportsHot(module, __webpack_require__(66))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "AvatarFooter.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+	/* REACT HOT LOADER */ }).call(this); } finally { if (true) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = __webpack_require__(184); if (makeExportsHot(module, __webpack_require__(66))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "SiteFooter.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)(module)))
 
 /***/ },
-/* 202 */
+/* 192 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(module) {/* REACT HOT LOADER */ if (true) { (function () { var ReactHotAPI = __webpack_require__(3), RootInstanceProvider = __webpack_require__(11), ReactMount = __webpack_require__(13), React = __webpack_require__(66); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
@@ -36277,111 +35701,22 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var AvatarFooter = function AvatarFooter(_ref) {
-	  var title = _ref.title;
-	  var description = _ref.description;
-	  var author = _ref.author;
-	  var links = _ref.links;
+	var AltFooter = function AltFooter(_ref) {
 	  var footer = _ref.footer;
 
-	  var props = _objectWithoutProperties(_ref, ['title', 'description', 'author', 'links', 'footer']);
+	  var props = _objectWithoutProperties(_ref, ['footer']);
 
-	  return _react2['default'].createElement(
-	    'footer',
-	    { 'data-name': 'AvatarFooter', className: 'pam phl-ns pbxl-ns ptl bt b--color' },
-	    _react2['default'].createElement(
-	      'div',
-	      { className: 'db' },
-	      _react2['default'].createElement('a', { href: '{author.email}', className: 'db fw6 link dim f3-ns o-50', children: author.emailText })
-	    ),
-	    _react2['default'].createElement(
-	      'div',
-	      { className: 'mtl' },
-	      links.map(function (link, i) {
-	        return _react2['default'].createElement(
-	          'a',
-	          { key: i, href: link.href, className: 'link dim pvl prm prl-ns' },
-	          _react2['default'].createElement(
-	            'span',
-	            { className: 'f4 bold ttu tracked' },
-	            link.name
-	          )
-	        );
-	      })
-	    )
-	  );
+	  return _react2['default'].createElement('footer', { 'data-name': 'AltFooter', className: 'black' });
 	};
 
-	exports['default'] = AvatarFooter;
+	exports['default'] = AltFooter;
 	module.exports = exports['default'];
 
-	/* REACT HOT LOADER */ }).call(this); } finally { if (true) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = __webpack_require__(184); if (makeExportsHot(module, __webpack_require__(66))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "InlineFooter.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+	/* REACT HOT LOADER */ }).call(this); } finally { if (true) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = __webpack_require__(184); if (makeExportsHot(module, __webpack_require__(66))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "AltFooter.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)(module)))
 
 /***/ },
-/* 203 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(module) {/* REACT HOT LOADER */ if (true) { (function () { var ReactHotAPI = __webpack_require__(3), RootInstanceProvider = __webpack_require__(11), ReactMount = __webpack_require__(13), React = __webpack_require__(66); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
-
-	'use strict';
-
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-	function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
-
-	var _react = __webpack_require__(66);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var AvatarFooter = function AvatarFooter(_ref) {
-	  var title = _ref.title;
-	  var description = _ref.description;
-	  var author = _ref.author;
-	  var links = _ref.links;
-
-	  var props = _objectWithoutProperties(_ref, ['title', 'description', 'author', 'links']);
-
-	  return _react2['default'].createElement(
-	    'footer',
-	    { 'data-name': 'AvatarFooter', className: 'pam phl-ns pbxl-ns tc ptl ptxl-ns bt b--color' },
-	    _react2['default'].createElement(
-	      'svg',
-	      { xmlns: 'http://www.w3.org/2000/svg', viewBox: '0 0 128 128', className: 'mw3 dib', style: 'opacity:.5' },
-	      _react2['default'].createElement('path', { fill: 'currentColor',
-	        d: ' M64 0 L64 4 L76 4 L74 6 L94 14 L92 16 L104 20 L100 22 L106 28 L102 28 L106 56 Q110 62 110 70 T105 84 L96 108 C92 116 76 128 64 128 C52 128 36 116 32 108 L23 84 Q18 78 18 70 T22 56 L22 22 L26 24 L34 12 L36 16z M72 40 Q56 30 40 30 Q32 34 30 48 L30 48 L28 74 C28 81 37 102 38 104 C46 118 62 121 64 121 C66 121 82 118 90 104 C91 102 100 81 100 74 L99 52 L94 40 L92 42 L84 38 L84 42 L74 36 M44 62 A5.5 5.5 0 0 0 44 73 A5.5 5.5 0 0 0 44 62 M84 62 A5.5 5.5 0 0 0 84 73 A5.5 5.5 0 0 0 84 62 M57 88 H71 A2 2 0 0 1 71 92 H57 A2 2 0 0 1 57 88 M53 104 H75 A2 2 0 0 1 75 108 H53 A2 2 0 0 1 53 104 M33.3 60.4 C34.6 57.8 37 55.9 39.7 55.2 C43 54.4 46.8 55.3 50.4 58 C51.3 58.6 52.5 58.4 53.2 57.5 C53.8 56.6 53.6 55.4 52.7 54.7 C46.8 50.5 41.8 50.5 38.7 51.3 C34.8 52.3 31.5 54.9 29.7 58.6 C29.2 59.6 29.6 60.8 30.6 61.3 C30.9 61.4 31.2 61.5 31.5 61.5 C32.2 61.5 32.9 61.1 33.3 60.4 z M97.7 61.9 C98.5 61.2  98.6  59.9  97.9  59.1 C94.3 55  90.1  52.9  85.4  53 C82 53  78.3  54.2  74.3  56.6 C73.3 57.2  73  58.4  73.6  59.3 C74.2 60.3  75.4  60.6  76.3  60 C79.7 58  82.7  57  85.5  57 C89 57  92.1  58.5  95  61.7 C95.4 62.2  95.9  62.4  96.5  62.4 C96.8 62.4 97.3 62.2 97.7 61.9 z ' })
-	    ),
-	    _react2['default'].createElement('h1', { className: 'db f2 f1-l v-mid mls', children: title }),
-	    _react2['default'].createElement(
-	      'div',
-	      { className: 'mts' },
-	      links.map(function (link, i) {
-	        return _react2['default'].createElement(
-	          'a',
-	          { key: i, href: link.href, className: 'link dim pvl phm prl-ns' },
-	          _react2['default'].createElement(
-	            'span',
-	            { className: 'f4 bold' },
-	            link.name
-	          )
-	        );
-	      })
-	    )
-	  );
-	};
-
-	exports['default'] = AvatarFooter;
-	module.exports = exports['default'];
-
-	/* REACT HOT LOADER */ }).call(this); } finally { if (true) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = __webpack_require__(184); if (makeExportsHot(module, __webpack_require__(66))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "CenteredAvatarFooter.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)(module)))
-
-/***/ },
-/* 204 */
+/* 193 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(module) {/* REACT HOT LOADER */ if (true) { (function () { var ReactHotAPI = __webpack_require__(3), RootInstanceProvider = __webpack_require__(11), ReactMount = __webpack_require__(13), React = __webpack_require__(66); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
@@ -36406,386 +35741,25 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _articlesLargeArticle = __webpack_require__(205);
-
-	var _articlesLargeArticle2 = _interopRequireDefault(_articlesLargeArticle);
-
-	var _articlesPreviewLatestArticle = __webpack_require__(207);
-
-	var _articlesPreviewLatestArticle2 = _interopRequireDefault(_articlesPreviewLatestArticle);
-
-	var _articlesCenteredPreviewArticle = __webpack_require__(208);
-
-	var _articlesCenteredPreviewArticle2 = _interopRequireDefault(_articlesCenteredPreviewArticle);
-
-	var articles = [_articlesLargeArticle2['default'],
-	// CenteredPreviewArticle,
-	_articlesPreviewLatestArticle2['default']];
-
-	exports.articles = articles;
-
-	var Articles = (function (_React$Component) {
-	  _inherits(Articles, _React$Component);
-
-	  function Articles() {
-	    _classCallCheck(this, Articles);
-
-	    _get(Object.getPrototypeOf(Articles.prototype), 'constructor', this).call(this);
-	    this.defaultProps = {
-	      i: 0
-	    };
-	  }
-
-	  _createClass(Articles, [{
-	    key: 'render',
-	    value: function render() {
-	      var i = this.props.i;
-
-	      var Component = Articles.getArticles()[i];
-	      return _react2['default'].createElement(Component, this.props);
-	    }
-	  }], [{
-	    key: 'getArticles',
-	    value: function getArticles() {
-	      return articles;
-	    }
-	  }]);
-
-	  return Articles;
-	})(_react2['default'].Component);
-
-	exports['default'] = Articles;
-
-	/* REACT HOT LOADER */ }).call(this); } finally { if (true) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = __webpack_require__(184); if (makeExportsHot(module, __webpack_require__(66))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Articles.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)(module)))
-
-/***/ },
-/* 205 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(module) {/* REACT HOT LOADER */ if (true) { (function () { var ReactHotAPI = __webpack_require__(3), RootInstanceProvider = __webpack_require__(11), ReactMount = __webpack_require__(13), React = __webpack_require__(66); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
-
-	'use strict';
-
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-	function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
-
-	var _react = __webpack_require__(66);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _classnames = __webpack_require__(206);
-
-	var _classnames2 = _interopRequireDefault(_classnames);
-
-	var LargeArticle = function LargeArticle(_ref) {
-	  var name = _ref.name;
-	  var posts = _ref.posts;
-
-	  var props = _objectWithoutProperties(_ref, ['name', 'posts']);
-
-	  return _react2['default'].createElement(
-	    'section',
-	    { 'data-name': 'LargeArticle', className: '' },
-	    posts.map(function (post, i) {
-	      return _react2['default'].createElement(
-	        'article',
-	        { key: i, className: 'phm phl-ns mtxl' },
-	        _react2['default'].createElement(
-	          'a',
-	          { href: post.href, className: 'db link dim' },
-	          _react2['default'].createElement(
-	            'date',
-	            { className: 'f5 ttu tracked bold db' },
-	            post.date
-	          ),
-	          _react2['default'].createElement(
-	            'h1',
-	            { className: 'f3 f1-m mega-l bold' },
-	            post.title
-	          ),
-	          _react2['default'].createElement(
-	            'p',
-	            { className: 'db measure lh-copy f4 f2-ns fw4' },
-	            post.content
-	          ),
-	          _react2['default'].createElement(
-	            'span',
-	            { className: 'f4 f3-ns' },
-	            ' Read More '
-	          )
-	        )
-	      );
-	    })
-	  );
-	};
-
-	exports['default'] = LargeArticle;
-	module.exports = exports['default'];
-
-	/* REACT HOT LOADER */ }).call(this); } finally { if (true) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = __webpack_require__(184); if (makeExportsHot(module, __webpack_require__(66))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "LargeArticle.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)(module)))
-
-/***/ },
-/* 206 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
-	  Copyright (c) 2016 Jed Watson.
-	  Licensed under the MIT License (MIT), see
-	  http://jedwatson.github.io/classnames
-	*/
-	/* global define */
-
-	(function () {
-		'use strict';
-
-		var hasOwn = {}.hasOwnProperty;
-
-		function classNames () {
-			var classes = [];
-
-			for (var i = 0; i < arguments.length; i++) {
-				var arg = arguments[i];
-				if (!arg) continue;
-
-				var argType = typeof arg;
-
-				if (argType === 'string' || argType === 'number') {
-					classes.push(arg);
-				} else if (Array.isArray(arg)) {
-					classes.push(classNames.apply(null, arg));
-				} else if (argType === 'object') {
-					for (var key in arg) {
-						if (hasOwn.call(arg, key) && arg[key]) {
-							classes.push(key);
-						}
-					}
-				}
-			}
-
-			return classes.join(' ');
-		}
-
-		if (typeof module !== 'undefined' && module.exports) {
-			module.exports = classNames;
-		} else if (true) {
-			// register as 'classnames', consistent with npm package name
-			!(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
-				return classNames;
-			}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-		} else {
-			window.classNames = classNames;
-		}
-	}());
-
-
-/***/ },
-/* 207 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(module) {/* REACT HOT LOADER */ if (true) { (function () { var ReactHotAPI = __webpack_require__(3), RootInstanceProvider = __webpack_require__(11), ReactMount = __webpack_require__(13), React = __webpack_require__(66); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
-
-	'use strict';
-
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-	function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
-
-	var _react = __webpack_require__(66);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _classnames = __webpack_require__(206);
-
-	var _classnames2 = _interopRequireDefault(_classnames);
-
-	var PreviewLatestArticle = function PreviewLatestArticle(_ref) {
-	  var name = _ref.name;
-	  var posts = _ref.posts;
-
-	  var props = _objectWithoutProperties(_ref, ['name', 'posts']);
-
-	  return _react2['default'].createElement(
-	    'section',
-	    { 'data-name': 'PreviewLatestArticle', className: '' },
-	    posts.map(function (post, i) {
-	      return _react2['default'].createElement(
-	        'article',
-	        { key: i, className: 'phm phl-ns mbxl' },
-	        _react2['default'].createElement(
-	          'a',
-	          { href: post.href, className: 'db link dim' },
-	          _react2['default'].createElement(
-	            'h1',
-	            { className: 'f4 f3-ns mega-ns bold' },
-	            post.title
-	          ),
-	          _react2['default'].createElement(
-	            'h1',
-	            { className: 'f5 ttu tracked bold' },
-	            post.date
-	          ),
-	          _react2['default'].createElement(
-	            'p',
-	            { className: 'db measure lh-copy f4 f3-l fw4' },
-	            post.content
-	          ),
-	          _react2['default'].createElement(
-	            'span',
-	            { className: 'link bold dim db mtm' },
-	            'Read More'
-	          )
-	        )
-	      );
-	    })
-	  );
-	};
-
-	exports['default'] = PreviewLatestArticle;
-	module.exports = exports['default'];
-
-	/* REACT HOT LOADER */ }).call(this); } finally { if (true) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = __webpack_require__(184); if (makeExportsHot(module, __webpack_require__(66))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "PreviewLatestArticle.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)(module)))
-
-/***/ },
-/* 208 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(module) {/* REACT HOT LOADER */ if (true) { (function () { var ReactHotAPI = __webpack_require__(3), RootInstanceProvider = __webpack_require__(11), ReactMount = __webpack_require__(13), React = __webpack_require__(66); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
-
-	'use strict';
-
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-	function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
-
-	var _react = __webpack_require__(66);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _classnames = __webpack_require__(206);
-
-	var _classnames2 = _interopRequireDefault(_classnames);
-
-	var CenteredPreviewArticle = function CenteredPreviewArticle(_ref) {
-	  var name = _ref.name;
-	  var posts = _ref.posts;
-
-	  var props = _objectWithoutProperties(_ref, ['name', 'posts']);
-
-	  return _react2['default'].createElement(
-	    'section',
-	    { 'data-name': 'CenteredPreviewArticle', className: '' },
-	    posts.map(function (post, i) {
-	      return _react2['default'].createElement(
-	        'article',
-	        { key: i, className: 'phm phl-ns mtl' },
-	        _react2['default'].createElement(
-	          'a',
-	          { href: post.href, className: 'db link dim' },
-	          _react2['default'].createElement(
-	            'date',
-	            { className: 'f5 ttu tracked bold tc db' },
-	            post.date
-	          ),
-	          _react2['default'].createElement(
-	            'h1',
-	            { className: 'f4 f3-ns mega-ns bold tc' },
-	            post.title
-	          ),
-	          _react2['default'].createElement(
-	            'p',
-	            { className: 'db measure lh-copy f4 f3-ns tj center fw4' },
-	            post.content
-	          ),
-	          _react2['default'].createElement(
-	            'span',
-	            { className: 'db f3 link bold dim mtxl' },
-	            'Read More'
-	          )
-	        )
-	      );
-	    })
-	  );
-	};
-
-	exports['default'] = CenteredPreviewArticle;
-	module.exports = exports['default'];
-
-	/* REACT HOT LOADER */ }).call(this); } finally { if (true) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = __webpack_require__(184); if (makeExportsHot(module, __webpack_require__(66))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "CenteredPreviewArticle.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)(module)))
-
-/***/ },
-/* 209 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(module) {/* REACT HOT LOADER */ if (true) { (function () { var ReactHotAPI = __webpack_require__(3), RootInstanceProvider = __webpack_require__(11), ReactMount = __webpack_require__(13), React = __webpack_require__(66); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
-
-	'use strict';
-
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var _react = __webpack_require__(66);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _collectionsListCollection = __webpack_require__(210);
+	var _collectionsListCollection = __webpack_require__(194);
 
 	var _collectionsListCollection2 = _interopRequireDefault(_collectionsListCollection);
 
-	var _collectionsListCollectionTitle = __webpack_require__(211);
+	var _collectionsDetailListCollection = __webpack_require__(195);
 
-	var _collectionsListCollectionTitle2 = _interopRequireDefault(_collectionsListCollectionTitle);
+	var _collectionsDetailListCollection2 = _interopRequireDefault(_collectionsDetailListCollection);
 
-	var _collectionsListCollectionTitleBold = __webpack_require__(212);
+	var _collectionsGridCollection = __webpack_require__(196);
 
-	var _collectionsListCollectionTitleBold2 = _interopRequireDefault(_collectionsListCollectionTitleBold);
+	var _collectionsGridCollection2 = _interopRequireDefault(_collectionsGridCollection);
 
-	var _collectionsListCollectionTitleSmall = __webpack_require__(213);
+	var _collectionsChromelessGridCollection = __webpack_require__(197);
 
-	var _collectionsListCollectionTitleSmall2 = _interopRequireDefault(_collectionsListCollectionTitleSmall);
+	var _collectionsChromelessGridCollection2 = _interopRequireDefault(_collectionsChromelessGridCollection);
 
-	var _collectionsListCollectionInline = __webpack_require__(214);
-
-	var _collectionsListCollectionInline2 = _interopRequireDefault(_collectionsListCollectionInline);
-
-	var _collectionsListCollectionTile = __webpack_require__(215);
-
-	var _collectionsListCollectionTile2 = _interopRequireDefault(_collectionsListCollectionTile);
-
-	var collections = [_collectionsListCollection2['default'], _collectionsListCollectionTitle2['default'], _collectionsListCollectionTitleBold2['default'],
-	//ListCollectionTitleSmall,
-	_collectionsListCollectionInline2['default']];
+	var collections = [_collectionsListCollection2['default'], _collectionsDetailListCollection2['default'], _collectionsGridCollection2['default'], _collectionsChromelessGridCollection2['default']];
 
 	exports.collections = collections;
-
-	//  ListCollectionTile
 
 	var Collections = (function (_React$Component) {
 	  _inherits(Collections, _React$Component);
@@ -36823,7 +35797,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)(module)))
 
 /***/ },
-/* 210 */
+/* 194 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(module) {/* REACT HOT LOADER */ if (true) { (function () { var ReactHotAPI = __webpack_require__(3), RootInstanceProvider = __webpack_require__(11), ReactMount = __webpack_require__(13), React = __webpack_require__(66); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
@@ -36851,25 +35825,25 @@
 	  return _react2['default'].createElement(
 	    'section',
 	    { 'data-name': 'ListCollection' },
-	    _react2['default'].createElement('h2', { className: 'phm phl-ns pvl pvxl-ns', children: name }),
+	    _react2['default'].createElement('h2', { className: 'black', children: name }),
 	    _react2['default'].createElement(
 	      'ul',
-	      { className: 'list pln mbn' },
+	      { className: 'black' },
 	      items.map(function (item, i) {
 	        return _react2['default'].createElement(
 	          'li',
-	          { key: i, className: 'phm phl-ns bb b--color' },
+	          { key: i, className: 'black' },
 	          _react2['default'].createElement(
 	            'a',
-	            { href: item.href, className: 'db link dim pvl' },
+	            { href: item.href, className: 'black' },
 	            _react2['default'].createElement(
 	              'span',
-	              { className: 'f1 mega-l db bold' },
+	              { className: 'black' },
 	              item.name
 	            ),
 	            _react2['default'].createElement(
 	              'span',
-	              { className: 'f4 f2-l lh-copy' },
+	              { className: 'black' },
 	              item.description
 	            )
 	          )
@@ -36886,7 +35860,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)(module)))
 
 /***/ },
-/* 211 */
+/* 195 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(module) {/* REACT HOT LOADER */ if (true) { (function () { var ReactHotAPI = __webpack_require__(3), RootInstanceProvider = __webpack_require__(11), ReactMount = __webpack_require__(13), React = __webpack_require__(66); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
@@ -36905,7 +35879,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var ListCollectionTitle = function ListCollectionTitle(_ref) {
+	var DetailListCollection = function DetailListCollection(_ref) {
 	  var name = _ref.name;
 	  var items = _ref.items;
 
@@ -36913,38 +35887,26 @@
 
 	  return _react2['default'].createElement(
 	    'section',
-	    { 'data-name': 'ListCollectionTitle', className: 'pbl pbxl-ns' },
-	    _react2['default'].createElement('h2', { className: 'phm phl-ns pvl', children: name }),
+	    { 'data-name': 'DetailListCollection', className: 'black' },
+	    _react2['default'].createElement('h2', { className: 'black', children: name }),
 	    _react2['default'].createElement(
 	      'ul',
-	      { className: 'list phm phl-ns mbn' },
+	      { className: 'black' },
 	      items.map(function (item, i) {
-	        return _react2['default'].createElement(
-	          'li',
-	          { key: i, className: 'dib mrl' },
-	          _react2['default'].createElement(
-	            'a',
-	            { href: item.href, className: 'db link dim' },
-	            _react2['default'].createElement(
-	              'span',
-	              { className: 'f1 mega-l db bold' },
-	              item.name
-	            )
-	          )
-	        );
+	        return _react2['default'].createElement('li', { key: i, className: 'black' });
 	      })
 	    )
 	  );
 	};
 
-	exports['default'] = ListCollectionTitle;
+	exports['default'] = DetailListCollection;
 	module.exports = exports['default'];
 
-	/* REACT HOT LOADER */ }).call(this); } finally { if (true) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = __webpack_require__(184); if (makeExportsHot(module, __webpack_require__(66))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "ListCollectionTitle.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+	/* REACT HOT LOADER */ }).call(this); } finally { if (true) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = __webpack_require__(184); if (makeExportsHot(module, __webpack_require__(66))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "DetailListCollection.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)(module)))
 
 /***/ },
-/* 212 */
+/* 196 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(module) {/* REACT HOT LOADER */ if (true) { (function () { var ReactHotAPI = __webpack_require__(3), RootInstanceProvider = __webpack_require__(11), ReactMount = __webpack_require__(13), React = __webpack_require__(66); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
@@ -36963,7 +35925,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var ListCollectionTitle = function ListCollectionTitle(_ref) {
+	var GridCollection = function GridCollection(_ref) {
 	  var name = _ref.name;
 	  var items = _ref.items;
 
@@ -36971,21 +35933,21 @@
 
 	  return _react2['default'].createElement(
 	    'section',
-	    { 'data-name': 'ListCollectionTitle', className: 'pbl pbxl-ns' },
-	    _react2['default'].createElement('h2', { className: 'phm phl-ns pvl', children: name }),
+	    { 'data-name': 'GridCollection', className: 'black' },
+	    _react2['default'].createElement('h2', { className: 'black', children: name }),
 	    _react2['default'].createElement(
 	      'ul',
-	      { className: 'list phm phl-ns mbn' },
+	      { className: 'black' },
 	      items.map(function (item, i) {
 	        return _react2['default'].createElement(
 	          'li',
-	          { key: i, className: 'dib mrl' },
+	          { key: i, className: 'black' },
 	          _react2['default'].createElement(
 	            'a',
-	            { href: item.href, className: 'db link dim' },
+	            { href: item.href, className: 'black' },
 	            _react2['default'].createElement(
 	              'span',
-	              { className: 'f1 mega-l db b fw6 ttu tracked' },
+	              { className: 'black' },
 	              item.name
 	            )
 	          )
@@ -36995,14 +35957,14 @@
 	  );
 	};
 
-	exports['default'] = ListCollectionTitle;
+	exports['default'] = GridCollection;
 	module.exports = exports['default'];
 
-	/* REACT HOT LOADER */ }).call(this); } finally { if (true) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = __webpack_require__(184); if (makeExportsHot(module, __webpack_require__(66))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "ListCollectionTitleBold.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+	/* REACT HOT LOADER */ }).call(this); } finally { if (true) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = __webpack_require__(184); if (makeExportsHot(module, __webpack_require__(66))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "GridCollection.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)(module)))
 
 /***/ },
-/* 213 */
+/* 197 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(module) {/* REACT HOT LOADER */ if (true) { (function () { var ReactHotAPI = __webpack_require__(3), RootInstanceProvider = __webpack_require__(11), ReactMount = __webpack_require__(13), React = __webpack_require__(66); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
@@ -37021,31 +35983,27 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var ListCollectionTitleSmall = function ListCollectionTitleSmall(_ref) {
-	  var name = _ref.name;
+	var ChromelessGridCollection = function ChromelessGridCollection(_ref) {
+	  var header = _ref.header;
 	  var items = _ref.items;
 
-	  var props = _objectWithoutProperties(_ref, ['name', 'items']);
+	  var props = _objectWithoutProperties(_ref, ['header', 'items']);
 
 	  return _react2['default'].createElement(
 	    'section',
-	    { 'data-name': 'ListCollectionTitleSmall', className: 'pbl pbxl-ns' },
-	    _react2['default'].createElement('h2', { className: 'phm phl-ns pvl', children: name }),
+	    { 'data-name': 'ChromelessGridCollection', className: 'black' },
+	    _react2['default'].createElement('h2', { className: 'black', children: header.name }),
 	    _react2['default'].createElement(
 	      'ul',
-	      { className: 'list phm phl-ns mbn' },
+	      { className: 'black' },
 	      items.map(function (item, i) {
 	        return _react2['default'].createElement(
 	          'li',
-	          { key: i, className: 'dib mrl' },
+	          { key: i, className: 'black' },
 	          _react2['default'].createElement(
 	            'a',
-	            { href: item.href, className: 'db link dim' },
-	            _react2['default'].createElement(
-	              'span',
-	              { className: 'f4 db bold' },
-	              item.name
-	            )
+	            { href: '#', className: 'black' },
+	            _react2['default'].createElement('span', { className: 'black' })
 	          )
 	        );
 	      })
@@ -37053,158 +36011,14 @@
 	  );
 	};
 
-	exports['default'] = ListCollectionTitleSmall;
+	exports['default'] = ChromelessGridCollection;
 	module.exports = exports['default'];
 
-	/* REACT HOT LOADER */ }).call(this); } finally { if (true) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = __webpack_require__(184); if (makeExportsHot(module, __webpack_require__(66))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "ListCollectionTitleSmall.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+	/* REACT HOT LOADER */ }).call(this); } finally { if (true) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = __webpack_require__(184); if (makeExportsHot(module, __webpack_require__(66))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "ChromelessGridCollection.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)(module)))
 
 /***/ },
-/* 214 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(module) {/* REACT HOT LOADER */ if (true) { (function () { var ReactHotAPI = __webpack_require__(3), RootInstanceProvider = __webpack_require__(11), ReactMount = __webpack_require__(13), React = __webpack_require__(66); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
-
-	'use strict';
-
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-	function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
-
-	var _react = __webpack_require__(66);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var ListCollectionInline = function ListCollectionInline(_ref) {
-	  var name = _ref.name;
-	  var items = _ref.items;
-
-	  var props = _objectWithoutProperties(_ref, ['name', 'items']);
-
-	  return _react2['default'].createElement(
-	    'section',
-	    { 'data-name': 'ListCollectionInline', className: 'ptl pbxl' },
-	    _react2['default'].createElement('h2', { className: 'phm phl-ns', children: name }),
-	    _react2['default'].createElement(
-	      'ul',
-	      { className: 'list pln mbn' },
-	      items.map(function (item, i) {
-	        return _react2['default'].createElement(
-	          'li',
-	          { key: i, className: 'phm phl-ns' },
-	          _react2['default'].createElement(
-	            'a',
-	            { href: item.href, className: 'db link dim pvs' },
-	            _react2['default'].createElement(
-	              'span',
-	              { className: 'f4 f3-ns bold lh-copy' },
-	              item.name
-	            ),
-	            ' -',
-	            _react2['default'].createElement(
-	              'span',
-	              { className: 'f4 f3-ns lh-copy' },
-	              ' ',
-	              item.description
-	            )
-	          )
-	        );
-	      })
-	    )
-	  );
-	};
-
-	exports['default'] = ListCollectionInline;
-	module.exports = exports['default'];
-
-	/* REACT HOT LOADER */ }).call(this); } finally { if (true) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = __webpack_require__(184); if (makeExportsHot(module, __webpack_require__(66))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "ListCollectionInline.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)(module)))
-
-/***/ },
-/* 215 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(module) {/* REACT HOT LOADER */ if (true) { (function () { var ReactHotAPI = __webpack_require__(3), RootInstanceProvider = __webpack_require__(11), ReactMount = __webpack_require__(13), React = __webpack_require__(66); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
-
-	'use strict';
-
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-	function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
-
-	var _react = __webpack_require__(66);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _classnames = __webpack_require__(206);
-
-	var _classnames2 = _interopRequireDefault(_classnames);
-
-	var ListCollectionTile = function ListCollectionTile(_ref) {
-	  var name = _ref.name;
-	  var items = _ref.items;
-
-	  var props = _objectWithoutProperties(_ref, ['name', 'items']);
-
-	  return _react2['default'].createElement(
-	    'section',
-	    { 'data-name': 'ListCollectionTile', className: '' },
-	    _react2['default'].createElement(
-	      'div',
-	      { className: 'phm phl-ns' },
-	      _react2['default'].createElement('h2', { className: 'f4 ttu tracked mtn ptl ptxl-ns fw6 ', children: name })
-	    ),
-	    _react2['default'].createElement(
-	      'ul',
-	      { className: 'list pln cf w-100 mtl mtl-ns pbl-ns' },
-	      items.map(function (item, i) {
-	        var short = false;
-	        if (item.name.length + item.description.length < 30) {
-	          short = true;
-	        }
-
-	        return _react2['default'].createElement(
-	          'li',
-	          { key: i, className: 'fl w-100 w-50-m w-33-l pvs pvm-m pvl-l h-at h4-ns dim' },
-	          _react2['default'].createElement(
-	            'a',
-	            { href: item.href, className: (0, _classnames2['default'])('db link dim phm phl-ns', {
-	                'f4': short,
-	                'f4': !short
-	              }) },
-	            _react2['default'].createElement(
-	              'span',
-	              { className: 'f3 f2-m f1-l fw6' },
-	              item.name
-	            ),
-	            _react2['default'].createElement(
-	              'span',
-	              { className: 'db measure lh-copy f4 fw4' },
-	              item.description
-	            )
-	          )
-	        );
-	      })
-	    )
-	  );
-	};
-
-	exports['default'] = ListCollectionTile;
-	module.exports = exports['default'];
-
-	/* REACT HOT LOADER */ }).call(this); } finally { if (true) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = __webpack_require__(184); if (makeExportsHot(module, __webpack_require__(66))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "ListCollectionTile.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)(module)))
-
-/***/ },
-/* 216 */
+/* 198 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(module) {/* REACT HOT LOADER */ if (true) { (function () { var ReactHotAPI = __webpack_require__(3), RootInstanceProvider = __webpack_require__(11), ReactMount = __webpack_require__(13), React = __webpack_require__(66); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
@@ -37247,7 +36061,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)(module)))
 
 /***/ },
-/* 217 */
+/* 199 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(module) {/* REACT HOT LOADER */ if (true) { (function () { var ReactHotAPI = __webpack_require__(3), RootInstanceProvider = __webpack_require__(11), ReactMount = __webpack_require__(13), React = __webpack_require__(66); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
@@ -37283,794 +36097,18 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)(module)))
 
 /***/ },
-/* 218 */
+/* 200 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(module) {/* REACT HOT LOADER */ if (true) { (function () { var ReactHotAPI = __webpack_require__(3), RootInstanceProvider = __webpack_require__(11), ReactMount = __webpack_require__(13), React = __webpack_require__(66); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
 
-	'use strict';
-
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-
-	var data = {
-	  // jxnblk.com
-	  jxnblk: {
-	    title: 'Jxnblk',
-	    // description: 'Component-based page generator',
-	    description: 'Brent Jackson is a designer/developer focused on modular design systems.',
-	    geoLocation: 'Based in Brooklyn, NY.',
-	    author: {
-	      name: 'Jxnblk',
-	      homepage: 'http://jxnblk.com',
-	      avatar: 'assets/avatar.svg',
-	      email: 'mailto:jacksonblack@gmail.com'
-	    },
-	    collections: [{
-	      name: 'Projects',
-	      items: [{
-	        name: 'Basscss',
-	        description: 'Low-level CSS toolkit',
-	        href: 'http://basscss.com'
-	      }, {
-	        name: 'CSS Stats',
-	        description: 'CSS parsing tool',
-	        href: 'http://cssstats.com'
-	      }, {
-	        name: 'Geomicons',
-	        description: 'Open source icons for the web',
-	        href: 'http://geomicons.com'
-	      }, {
-	        name: 'React Geomicons',
-	        description: 'React icon component for Geomicons Open',
-	        href: 'http://jxnblk.com/react-geomicons'
-	      }, {
-	        name: 'Colorable',
-	        description: 'Color palette contrast tester',
-	        href: 'http://jxnblk.com/colorable'
-	      }, {
-	        name: 'SVG Icons in React',
-	        description: 'How to create generative graphics with JavaScript',
-	        href: 'http://jxnblk.com/react-icons'
-	      }, {
-	        name: 'Paths',
-	        description: 'Edit SVGs in the browser',
-	        href: 'http://jxnblk.com/paths'
-	      }, {
-	        name: 'Gravitons',
-	        description: 'Virtually massless CSS layout microlibrary',
-	        href: 'http://jxnblk.com/gravitons'
-	      }, {
-	        name: 'Loading',
-	        description: 'Animated SVG loading indicators',
-	        href: 'http://jxnblk.com/loading'
-	      }, {
-	        name: 'Writing',
-	        description: 'Thoughts on minimalism and design',
-	        href: 'http://jxnblk.com/writing'
-	      }, {
-	        name: 'Shade',
-	        description: 'Mathematically-derived gradients',
-	        href: 'http://jxnblk.com/shade'
-	      }, {
-	        name: 'Rgx',
-	        description: 'Constraint-based React grid system',
-	        href: 'http://jxnblk.com/rgx'
-	      }, {
-	        name: 'Fitter Happier Text',
-	        description: 'Performant, fully fluid headings',
-	        href: 'http://jxnblk.com/fitter-happier-text'
-	      }, {
-	        name: 'React Fitter Happier Text',
-	        description: 'React component for fully fluid headings',
-	        href: 'http://jxnblk.com/react-fitter-happier-text'
-	      }, {
-	        name: 'Spectral',
-	        description: 'Click the rainbow',
-	        href: 'http://jxnblk.com/Spectral'
-	      }, {
-	        name: 'VHS',
-	        description: 'Post-future CSS animations',
-	        href: 'http://jxnblk.com/vhs'
-	      }, {
-	        name: 'MrsJxn',
-	        description: 'Post-future beats',
-	        href: 'http://mrsjxn.com'
-	      }, {
-	        name: 'Skullcat',
-	        description: 'Avatar and web audio experiment',
-	        href: 'http://jxnblk.com/skullcat'
-	      }]
-	    }, {
-	      name: 'Other Projects',
-	      items: [{ name: 'Work', href: '//mrsjxn.com', description: 'Post-Future Music made with JxnBlk' }]
-	    }],
-	    posts: [{ title: 'Mathematical Web Typography',
-	      href: 'http://jxnblk.com/writing/posts/mathematical-web-typography/',
-	      date: 'TUE JUN 23 2015',
-	      content: "When it comes to designing for the Web I like to follow a handful of general principles. First, design for the medium, or as Frank Chimero puts it, follow “the grain of the Web”. The Web is fluid - based on screens and devices of varying sizes – and typography on the Web should reflect that. Second, design content-out, which usually means designing around a strong typographical base since the large majority of Web content and UI is text. And last, design with modular scales. Things built on the Web should be fluid and infinitely scalable. Using modular scales in a design compliments that idea and keeps things organized in the face of growing complexity."
-	    }],
-	    links: [{ name: 'Writing', href: 'http://jxnblk.com/writing' }, { name: 'Twitter', href: 'http://twitter.com/jxnblk' }, { name: 'GitHub', href: 'http://github.com/jxnblk' }, { name: 'SoundCloud', href: 'http://soundcloud.com/jxnblk' }]
-	  },
-
-	  // Sample repo from GitHub API docs
-	  // This will need to be mapped/normalized to work with the
-	  // component architecture
-	  repo: {
-	    "id": 1296269,
-	    "owner": {
-	      "login": "octocat",
-	      "id": 1,
-	      "avatar_url": "https://github.com/images/error/octocat_happy.gif",
-	      "gravatar_id": "",
-	      "url": "https://api.github.com/users/octocat",
-	      "html_url": "https://github.com/octocat",
-	      "followers_url": "https://api.github.com/users/octocat/followers",
-	      "following_url": "https://api.github.com/users/octocat/following{/other_user}",
-	      "gists_url": "https://api.github.com/users/octocat/gists{/gist_id}",
-	      "starred_url": "https://api.github.com/users/octocat/starred{/owner}{/repo}",
-	      "subscriptions_url": "https://api.github.com/users/octocat/subscriptions",
-	      "organizations_url": "https://api.github.com/users/octocat/orgs",
-	      "repos_url": "https://api.github.com/users/octocat/repos",
-	      "events_url": "https://api.github.com/users/octocat/events{/privacy}",
-	      "received_events_url": "https://api.github.com/users/octocat/received_events",
-	      "type": "User",
-	      "site_admin": false
-	    },
-	    "name": "Hello-World",
-	    "full_name": "octocat/Hello-World",
-	    "description": "This your first repo!",
-	    "private": false,
-	    "fork": false,
-	    "url": "https://api.github.com/repos/octocat/Hello-World",
-	    "html_url": "https://github.com/octocat/Hello-World",
-	    "archive_url": "http://api.github.com/repos/octocat/Hello-World/{archive_format}{/ref}",
-	    "assignees_url": "http://api.github.com/repos/octocat/Hello-World/assignees{/user}",
-	    "blobs_url": "http://api.github.com/repos/octocat/Hello-World/git/blobs{/sha}",
-	    "branches_url": "http://api.github.com/repos/octocat/Hello-World/branches{/branch}",
-	    "clone_url": "https://github.com/octocat/Hello-World.git",
-	    "collaborators_url": "http://api.github.com/repos/octocat/Hello-World/collaborators{/collaborator}",
-	    "comments_url": "http://api.github.com/repos/octocat/Hello-World/comments{/number}",
-	    "commits_url": "http://api.github.com/repos/octocat/Hello-World/commits{/sha}",
-	    "compare_url": "http://api.github.com/repos/octocat/Hello-World/compare/{base}...{head}",
-	    "contents_url": "http://api.github.com/repos/octocat/Hello-World/contents/{+path}",
-	    "contributors_url": "http://api.github.com/repos/octocat/Hello-World/contributors",
-	    "downloads_url": "http://api.github.com/repos/octocat/Hello-World/downloads",
-	    "events_url": "http://api.github.com/repos/octocat/Hello-World/events",
-	    "forks_url": "http://api.github.com/repos/octocat/Hello-World/forks",
-	    "git_commits_url": "http://api.github.com/repos/octocat/Hello-World/git/commits{/sha}",
-	    "git_refs_url": "http://api.github.com/repos/octocat/Hello-World/git/refs{/sha}",
-	    "git_tags_url": "http://api.github.com/repos/octocat/Hello-World/git/tags{/sha}",
-	    "git_url": "git:github.com/octocat/Hello-World.git",
-	    "hooks_url": "http://api.github.com/repos/octocat/Hello-World/hooks",
-	    "issue_comment_url": "http://api.github.com/repos/octocat/Hello-World/issues/comments{/number}",
-	    "issue_events_url": "http://api.github.com/repos/octocat/Hello-World/issues/events{/number}",
-	    "issues_url": "http://api.github.com/repos/octocat/Hello-World/issues{/number}",
-	    "keys_url": "http://api.github.com/repos/octocat/Hello-World/keys{/key_id}",
-	    "labels_url": "http://api.github.com/repos/octocat/Hello-World/labels{/name}",
-	    "languages_url": "http://api.github.com/repos/octocat/Hello-World/languages",
-	    "merges_url": "http://api.github.com/repos/octocat/Hello-World/merges",
-	    "milestones_url": "http://api.github.com/repos/octocat/Hello-World/milestones{/number}",
-	    "mirror_url": "git:git.example.com/octocat/Hello-World",
-	    "notifications_url": "http://api.github.com/repos/octocat/Hello-World/notifications{?since, all, participating}",
-	    "pulls_url": "http://api.github.com/repos/octocat/Hello-World/pulls{/number}",
-	    "releases_url": "http://api.github.com/repos/octocat/Hello-World/releases{/id}",
-	    "ssh_url": "git@github.com:octocat/Hello-World.git",
-	    "stargazers_url": "http://api.github.com/repos/octocat/Hello-World/stargazers",
-	    "statuses_url": "http://api.github.com/repos/octocat/Hello-World/statuses/{sha}",
-	    "subscribers_url": "http://api.github.com/repos/octocat/Hello-World/subscribers",
-	    "subscription_url": "http://api.github.com/repos/octocat/Hello-World/subscription",
-	    "svn_url": "https://svn.github.com/octocat/Hello-World",
-	    "tags_url": "http://api.github.com/repos/octocat/Hello-World/tags",
-	    "teams_url": "http://api.github.com/repos/octocat/Hello-World/teams",
-	    "trees_url": "http://api.github.com/repos/octocat/Hello-World/git/trees{/sha}",
-	    "homepage": "https://github.com",
-	    "language": null,
-	    "forks_count": 9,
-	    "stargazers_count": 80,
-	    "watchers_count": 80,
-	    "size": 108,
-	    "default_branch": "master",
-	    "open_issues_count": 0,
-	    "has_issues": true,
-	    "has_wiki": true,
-	    "has_pages": false,
-	    "has_downloads": true,
-	    "pushed_at": "2011-01-26T19:06:43Z",
-	    "created_at": "2011-01-26T19:01:12Z",
-	    "updated_at": "2011-01-26T19:14:43Z",
-	    "permissions": {
-	      "admin": false,
-	      "push": false,
-	      "pull": true
-	    },
-	    "subscribers_count": 42,
-	    "organization": {
-	      "login": "octocat",
-	      "id": 1,
-	      "avatar_url": "https://github.com/images/error/octocat_happy.gif",
-	      "gravatar_id": "",
-	      "url": "https://api.github.com/users/octocat",
-	      "html_url": "https://github.com/octocat",
-	      "followers_url": "https://api.github.com/users/octocat/followers",
-	      "following_url": "https://api.github.com/users/octocat/following{/other_user}",
-	      "gists_url": "https://api.github.com/users/octocat/gists{/gist_id}",
-	      "starred_url": "https://api.github.com/users/octocat/starred{/owner}{/repo}",
-	      "subscriptions_url": "https://api.github.com/users/octocat/subscriptions",
-	      "organizations_url": "https://api.github.com/users/octocat/orgs",
-	      "repos_url": "https://api.github.com/users/octocat/repos",
-	      "events_url": "https://api.github.com/users/octocat/events{/privacy}",
-	      "received_events_url": "https://api.github.com/users/octocat/received_events",
-	      "type": "Organization",
-	      "site_admin": false
-	    },
-	    "parent": {
-	      "id": 1296269,
-	      "owner": {
-	        "login": "octocat",
-	        "id": 1,
-	        "avatar_url": "https://github.com/images/error/octocat_happy.gif",
-	        "gravatar_id": "",
-	        "url": "https://api.github.com/users/octocat",
-	        "html_url": "https://github.com/octocat",
-	        "followers_url": "https://api.github.com/users/octocat/followers",
-	        "following_url": "https://api.github.com/users/octocat/following{/other_user}",
-	        "gists_url": "https://api.github.com/users/octocat/gists{/gist_id}",
-	        "starred_url": "https://api.github.com/users/octocat/starred{/owner}{/repo}",
-	        "subscriptions_url": "https://api.github.com/users/octocat/subscriptions",
-	        "organizations_url": "https://api.github.com/users/octocat/orgs",
-	        "repos_url": "https://api.github.com/users/octocat/repos",
-	        "events_url": "https://api.github.com/users/octocat/events{/privacy}",
-	        "received_events_url": "https://api.github.com/users/octocat/received_events",
-	        "type": "User",
-	        "site_admin": false
-	      },
-	      "name": "Hello-World",
-	      "full_name": "octocat/Hello-World",
-	      "description": "This your first repo!",
-	      "private": false,
-	      "fork": false,
-	      "url": "https://api.github.com/repos/octocat/Hello-World",
-	      "html_url": "https://github.com/octocat/Hello-World",
-	      "archive_url": "http://api.github.com/repos/octocat/Hello-World/{archive_format}{/ref}",
-	      "assignees_url": "http://api.github.com/repos/octocat/Hello-World/assignees{/user}",
-	      "blobs_url": "http://api.github.com/repos/octocat/Hello-World/git/blobs{/sha}",
-	      "branches_url": "http://api.github.com/repos/octocat/Hello-World/branches{/branch}",
-	      "clone_url": "https://github.com/octocat/Hello-World.git",
-	      "collaborators_url": "http://api.github.com/repos/octocat/Hello-World/collaborators{/collaborator}",
-	      "comments_url": "http://api.github.com/repos/octocat/Hello-World/comments{/number}",
-	      "commits_url": "http://api.github.com/repos/octocat/Hello-World/commits{/sha}",
-	      "compare_url": "http://api.github.com/repos/octocat/Hello-World/compare/{base}...{head}",
-	      "contents_url": "http://api.github.com/repos/octocat/Hello-World/contents/{+path}",
-	      "contributors_url": "http://api.github.com/repos/octocat/Hello-World/contributors",
-	      "downloads_url": "http://api.github.com/repos/octocat/Hello-World/downloads",
-	      "events_url": "http://api.github.com/repos/octocat/Hello-World/events",
-	      "forks_url": "http://api.github.com/repos/octocat/Hello-World/forks",
-	      "git_commits_url": "http://api.github.com/repos/octocat/Hello-World/git/commits{/sha}",
-	      "git_refs_url": "http://api.github.com/repos/octocat/Hello-World/git/refs{/sha}",
-	      "git_tags_url": "http://api.github.com/repos/octocat/Hello-World/git/tags{/sha}",
-	      "git_url": "git:github.com/octocat/Hello-World.git",
-	      "hooks_url": "http://api.github.com/repos/octocat/Hello-World/hooks",
-	      "issue_comment_url": "http://api.github.com/repos/octocat/Hello-World/issues/comments{/number}",
-	      "issue_events_url": "http://api.github.com/repos/octocat/Hello-World/issues/events{/number}",
-	      "issues_url": "http://api.github.com/repos/octocat/Hello-World/issues{/number}",
-	      "keys_url": "http://api.github.com/repos/octocat/Hello-World/keys{/key_id}",
-	      "labels_url": "http://api.github.com/repos/octocat/Hello-World/labels{/name}",
-	      "languages_url": "http://api.github.com/repos/octocat/Hello-World/languages",
-	      "merges_url": "http://api.github.com/repos/octocat/Hello-World/merges",
-	      "milestones_url": "http://api.github.com/repos/octocat/Hello-World/milestones{/number}",
-	      "mirror_url": "git:git.example.com/octocat/Hello-World",
-	      "notifications_url": "http://api.github.com/repos/octocat/Hello-World/notifications{?since, all, participating}",
-	      "pulls_url": "http://api.github.com/repos/octocat/Hello-World/pulls{/number}",
-	      "releases_url": "http://api.github.com/repos/octocat/Hello-World/releases{/id}",
-	      "ssh_url": "git@github.com:octocat/Hello-World.git",
-	      "stargazers_url": "http://api.github.com/repos/octocat/Hello-World/stargazers",
-	      "statuses_url": "http://api.github.com/repos/octocat/Hello-World/statuses/{sha}",
-	      "subscribers_url": "http://api.github.com/repos/octocat/Hello-World/subscribers",
-	      "subscription_url": "http://api.github.com/repos/octocat/Hello-World/subscription",
-	      "svn_url": "https://svn.github.com/octocat/Hello-World",
-	      "tags_url": "http://api.github.com/repos/octocat/Hello-World/tags",
-	      "teams_url": "http://api.github.com/repos/octocat/Hello-World/teams",
-	      "trees_url": "http://api.github.com/repos/octocat/Hello-World/git/trees{/sha}",
-	      "homepage": "https://github.com",
-	      "language": null,
-	      "forks_count": 9,
-	      "stargazers_count": 80,
-	      "watchers_count": 80,
-	      "size": 108,
-	      "default_branch": "master",
-	      "open_issues_count": 0,
-	      "has_issues": true,
-	      "has_wiki": true,
-	      "has_pages": false,
-	      "has_downloads": true,
-	      "pushed_at": "2011-01-26T19:06:43Z",
-	      "created_at": "2011-01-26T19:01:12Z",
-	      "updated_at": "2011-01-26T19:14:43Z",
-	      "permissions": {
-	        "admin": false,
-	        "push": false,
-	        "pull": true
-	      }
-	    },
-	    "source": {
-	      "id": 1296269,
-	      "owner": {
-	        "login": "octocat",
-	        "id": 1,
-	        "avatar_url": "https://github.com/images/error/octocat_happy.gif",
-	        "gravatar_id": "",
-	        "url": "https://api.github.com/users/octocat",
-	        "html_url": "https://github.com/octocat",
-	        "followers_url": "https://api.github.com/users/octocat/followers",
-	        "following_url": "https://api.github.com/users/octocat/following{/other_user}",
-	        "gists_url": "https://api.github.com/users/octocat/gists{/gist_id}",
-	        "starred_url": "https://api.github.com/users/octocat/starred{/owner}{/repo}",
-	        "subscriptions_url": "https://api.github.com/users/octocat/subscriptions",
-	        "organizations_url": "https://api.github.com/users/octocat/orgs",
-	        "repos_url": "https://api.github.com/users/octocat/repos",
-	        "events_url": "https://api.github.com/users/octocat/events{/privacy}",
-	        "received_events_url": "https://api.github.com/users/octocat/received_events",
-	        "type": "User",
-	        "site_admin": false
-	      },
-	      "name": "Hello-World",
-	      "full_name": "octocat/Hello-World",
-	      "description": "This your first repo!",
-	      "private": false,
-	      "fork": false,
-	      "url": "https://api.github.com/repos/octocat/Hello-World",
-	      "html_url": "https://github.com/octocat/Hello-World",
-	      "archive_url": "http://api.github.com/repos/octocat/Hello-World/{archive_format}{/ref}",
-	      "assignees_url": "http://api.github.com/repos/octocat/Hello-World/assignees{/user}",
-	      "blobs_url": "http://api.github.com/repos/octocat/Hello-World/git/blobs{/sha}",
-	      "branches_url": "http://api.github.com/repos/octocat/Hello-World/branches{/branch}",
-	      "clone_url": "https://github.com/octocat/Hello-World.git",
-	      "collaborators_url": "http://api.github.com/repos/octocat/Hello-World/collaborators{/collaborator}",
-	      "comments_url": "http://api.github.com/repos/octocat/Hello-World/comments{/number}",
-	      "commits_url": "http://api.github.com/repos/octocat/Hello-World/commits{/sha}",
-	      "compare_url": "http://api.github.com/repos/octocat/Hello-World/compare/{base}...{head}",
-	      "contents_url": "http://api.github.com/repos/octocat/Hello-World/contents/{+path}",
-	      "contributors_url": "http://api.github.com/repos/octocat/Hello-World/contributors",
-	      "downloads_url": "http://api.github.com/repos/octocat/Hello-World/downloads",
-	      "events_url": "http://api.github.com/repos/octocat/Hello-World/events",
-	      "forks_url": "http://api.github.com/repos/octocat/Hello-World/forks",
-	      "git_commits_url": "http://api.github.com/repos/octocat/Hello-World/git/commits{/sha}",
-	      "git_refs_url": "http://api.github.com/repos/octocat/Hello-World/git/refs{/sha}",
-	      "git_tags_url": "http://api.github.com/repos/octocat/Hello-World/git/tags{/sha}",
-	      "git_url": "git:github.com/octocat/Hello-World.git",
-	      "hooks_url": "http://api.github.com/repos/octocat/Hello-World/hooks",
-	      "issue_comment_url": "http://api.github.com/repos/octocat/Hello-World/issues/comments{/number}",
-	      "issue_events_url": "http://api.github.com/repos/octocat/Hello-World/issues/events{/number}",
-	      "issues_url": "http://api.github.com/repos/octocat/Hello-World/issues{/number}",
-	      "keys_url": "http://api.github.com/repos/octocat/Hello-World/keys{/key_id}",
-	      "labels_url": "http://api.github.com/repos/octocat/Hello-World/labels{/name}",
-	      "languages_url": "http://api.github.com/repos/octocat/Hello-World/languages",
-	      "merges_url": "http://api.github.com/repos/octocat/Hello-World/merges",
-	      "milestones_url": "http://api.github.com/repos/octocat/Hello-World/milestones{/number}",
-	      "mirror_url": "git:git.example.com/octocat/Hello-World",
-	      "notifications_url": "http://api.github.com/repos/octocat/Hello-World/notifications{?since, all, participating}",
-	      "pulls_url": "http://api.github.com/repos/octocat/Hello-World/pulls{/number}",
-	      "releases_url": "http://api.github.com/repos/octocat/Hello-World/releases{/id}",
-	      "ssh_url": "git@github.com:octocat/Hello-World.git",
-	      "stargazers_url": "http://api.github.com/repos/octocat/Hello-World/stargazers",
-	      "statuses_url": "http://api.github.com/repos/octocat/Hello-World/statuses/{sha}",
-	      "subscribers_url": "http://api.github.com/repos/octocat/Hello-World/subscribers",
-	      "subscription_url": "http://api.github.com/repos/octocat/Hello-World/subscription",
-	      "svn_url": "https://svn.github.com/octocat/Hello-World",
-	      "tags_url": "http://api.github.com/repos/octocat/Hello-World/tags",
-	      "teams_url": "http://api.github.com/repos/octocat/Hello-World/teams",
-	      "trees_url": "http://api.github.com/repos/octocat/Hello-World/git/trees{/sha}",
-	      "homepage": "https://github.com",
-	      "language": null,
-	      "forks_count": 9,
-	      "stargazers_count": 80,
-	      "watchers_count": 80,
-	      "size": 108,
-	      "default_branch": "master",
-	      "open_issues_count": 0,
-	      "has_issues": true,
-	      "has_wiki": true,
-	      "has_pages": false,
-	      "has_downloads": true,
-	      "pushed_at": "2011-01-26T19:06:43Z",
-	      "created_at": "2011-01-26T19:01:12Z",
-	      "updated_at": "2011-01-26T19:14:43Z",
-	      "permissions": {
-	        "admin": false,
-	        "push": false,
-	        "pull": true
-	      }
-	    }
-	  },
-	  mrmrs: {
-	    title: 'Mrmrs',
-	    description: 'Adam Morse is a designer/developer focused on modular design systems.',
-	    geoLocation: 'Based in London',
-	    author: {
-	      name: 'Mrmrs',
-	      homepage: 'http://mrmrs.cc',
-	      avatar: 'assets/skullcat.svg',
-	      email: 'mailto:hi@mrmrs.cc',
-	      emailText: 'hi@mrmrs.cc'
-	    },
-	    about: {
-	      intro: 'Trying to make the web as fast as possible, highly readable, 100% responsive, and easy to navigate.',
-	      content: 'I like building tools that help make designing in the browser a little easier.',
-	      outro: 'Advocate for users and open-source.'
-	    },
-	    footer: {
-	      line1: 'I’m currently looking for full-time work in London or for a remote friendly company. If you’re interested in working together drop me a line: '
-	    },
-	    photos: [{
-	      name: 'Photos',
-	      items: [{
-	        title: 'Fake Title',
-	        src: 'http://mrmrs.io/photos/1.jpg'
-	      }, { title: 'Fake Title', src: 'http://mrmrs.io/photos/2.jpg' }, { title: 'Fake Title', src: 'http://mrmrs.io/photos/3.jpg' }, { title: 'Fake Title', src: 'http://mrmrs.io/photos/4.jpg' }, { title: 'Fake Title', src: 'http://mrmrs.io/photos/5.jpg' }, { title: 'Fake Title', src: 'http://mrmrs.io/photos/6.jpg' }, { title: 'Fake Title', src: 'http://mrmrs.io/photos/7.jpg' }, { title: 'Fake Title', src: 'http://mrmrs.io/photos/8.jpg' }, { title: 'Fake Title', src: 'http://mrmrs.io/photos/9.jpg' }]
-	    }, {
-	      name: 'Other Photos',
-	      items: [{ title: 'Fake Title 2', src: 'http://mrmrs.io/photos/1.jpg' }, { title: 'Fake Title 2', src: 'http://mrmrs.io/photos/2.jpg' }, { title: 'Fake Title 2', src: 'http://mrmrs.io/photos/3.jpg' }, { title: 'Fake Title 2', src: 'http://mrmrs.io/photos/4.jpg' }, { title: 'Fake Title 2', src: 'http://mrmrs.io/photos/5.jpg' }, { title: 'Fake Title 2', src: 'http://mrmrs.io/photos/6.jpg' }, { title: 'Fake Title 2', src: 'http://mrmrs.io/photos/7.jpg' }, { title: 'Fake Title 2', src: 'http://mrmrs.io/photos/8.jpg' }, { title: 'Fake Title 2', src: 'http://mrmrs.io/photos/9.jpg' }]
-	    }],
-	    collections: [{
-	      name: 'Projects',
-	      items: [{
-	        name: 'Tachyons',
-	        description: 'CSS utilities for rapid prototyping',
-	        href: 'http://tachyons.io'
-	      }, {
-	        name: 'CSS Stats',
-	        description: 'CSS parsing tool',
-	        href: 'http://cssstats.com'
-	      }, {
-	        name: 'Gfffs',
-	        description: 'Hi-def animations for the super-bored',
-	        href: 'http://gfffs.com'
-	      }, {
-	        name: 'Colors',
-	        description: 'A nicer color palette for the web.',
-	        href: 'http://clrs.cc'
-	      }, {
-	        name: 'Prnt',
-	        description: 'Collection of print work.',
-	        href: 'http://pesticide.io'
-	      }, {
-	        name: 'Gradients',
-	        description: 'Collection of curated css gradients.',
-	        href: 'http://mrmrs.io/gradients'
-	      }, {
-	        name: 'Pesticide',
-	        description: 'Kill your layout bugs faster than ever.',
-	        href: 'http://pesticide.io'
-	      }, {
-	        name: 'Btns',
-	        description: 'Responsive buttons.',
-	        href: 'http://mrmrs.io/btns'
-	      }, {
-	        name: 'Mnml',
-	        description: 'Minimal boilerplate',
-	        href: 'http://mn-ml.cc'
-	      }, {
-	        name: 'Diatonic',
-	        description: 'A type-scale.',
-	        href: 'http://mn-ml.cc'
-	      }, {
-	        name: 'Html',
-	        description: 'Every html element on one page.',
-	        href: 'http://mrmrs.io/html'
-	      }]
-	    }, {
-	      name: 'Other Projects',
-	      items: [{ name: 'mrsjxn', href: '//mrsjxn.com', description: 'Post-future beats with JxnBlk' }, { name: 'gifolio', href: '//mrmrs.io/gifolio', description: 'Portfolio in Gif format' }, { name: 'up and in thirds', href: '//mrmrs.io/up', description: 'Curated photos' }, { name: 'beats', href: '//mrmrs.io/beats', description: 'Music Noise' }]
-	    }],
-	    posts: [{ title: 'Design Systems',
-	      href: 'http://mrmrs.io/writing/2015/10/06/design-systems/',
-	      date: 'OCT 06 2015',
-	      content: "A scale comprised of 5, 10, 20, 25, 30 etc. cannot be represented by a ratio. They are ticks on a numberline not seen anywhere else in nature, print, architecture or music when studying cohesive design systems."
-	    }, { title: 'Too Many Tools and Frameworks',
-	      href: 'http://mrmrs.io/writing/2015/07/27/too-many-tools/',
-	      date: 'JUL 27 2015',
-	      content: "Theodore Sturgeon was a science fiction author, critic, and the basis for Kurt Vonnegut's recurring character Kilgore Trout. He was prolific, authoring over 200 pieces himself and critiquing around 400 others. His first piece came out in 1939 - a time in which science fiction was not widely respected within the field of literature."
-	    }],
-	    links: [{ name: 'Writing', href: 'http://mrmrs.io/writing' }, { name: 'Twitter', href: 'http://twitter.com/mrmrs_' }, { name: 'GitHub', href: 'http://github.com/mrmrs' }, { name: 'Npm', href: 'https://www.npmjs.com/~mrmrs' }, { name: 'Dribbble', href: 'https://www.dribbble.com/mrmrs' }]
-	  },
-
-	  // Sample repo from GitHub API docs
-	  // This will need to be mapped/normalized to work with the
-	  // component architecture
-	  repo: {
-	    "id": 1296269,
-	    "owner": {
-	      "login": "octocat",
-	      "id": 1,
-	      "avatar_url": "https://github.com/images/error/octocat_happy.gif",
-	      "gravatar_id": "",
-	      "url": "https://api.github.com/users/octocat",
-	      "html_url": "https://github.com/octocat",
-	      "followers_url": "https://api.github.com/users/octocat/followers",
-	      "following_url": "https://api.github.com/users/octocat/following{/other_user}",
-	      "gists_url": "https://api.github.com/users/octocat/gists{/gist_id}",
-	      "starred_url": "https://api.github.com/users/octocat/starred{/owner}{/repo}",
-	      "subscriptions_url": "https://api.github.com/users/octocat/subscriptions",
-	      "organizations_url": "https://api.github.com/users/octocat/orgs",
-	      "repos_url": "https://api.github.com/users/octocat/repos",
-	      "events_url": "https://api.github.com/users/octocat/events{/privacy}",
-	      "received_events_url": "https://api.github.com/users/octocat/received_events",
-	      "type": "User",
-	      "site_admin": false
-	    },
-	    "name": "Hello-World",
-	    "full_name": "octocat/Hello-World",
-	    "description": "This your first repo!",
-	    "private": false,
-	    "fork": false,
-	    "url": "https://api.github.com/repos/octocat/Hello-World",
-	    "html_url": "https://github.com/octocat/Hello-World",
-	    "archive_url": "http://api.github.com/repos/octocat/Hello-World/{archive_format}{/ref}",
-	    "assignees_url": "http://api.github.com/repos/octocat/Hello-World/assignees{/user}",
-	    "blobs_url": "http://api.github.com/repos/octocat/Hello-World/git/blobs{/sha}",
-	    "branches_url": "http://api.github.com/repos/octocat/Hello-World/branches{/branch}",
-	    "clone_url": "https://github.com/octocat/Hello-World.git",
-	    "collaborators_url": "http://api.github.com/repos/octocat/Hello-World/collaborators{/collaborator}",
-	    "comments_url": "http://api.github.com/repos/octocat/Hello-World/comments{/number}",
-	    "commits_url": "http://api.github.com/repos/octocat/Hello-World/commits{/sha}",
-	    "compare_url": "http://api.github.com/repos/octocat/Hello-World/compare/{base}...{head}",
-	    "contents_url": "http://api.github.com/repos/octocat/Hello-World/contents/{+path}",
-	    "contributors_url": "http://api.github.com/repos/octocat/Hello-World/contributors",
-	    "downloads_url": "http://api.github.com/repos/octocat/Hello-World/downloads",
-	    "events_url": "http://api.github.com/repos/octocat/Hello-World/events",
-	    "forks_url": "http://api.github.com/repos/octocat/Hello-World/forks",
-	    "git_commits_url": "http://api.github.com/repos/octocat/Hello-World/git/commits{/sha}",
-	    "git_refs_url": "http://api.github.com/repos/octocat/Hello-World/git/refs{/sha}",
-	    "git_tags_url": "http://api.github.com/repos/octocat/Hello-World/git/tags{/sha}",
-	    "git_url": "git:github.com/octocat/Hello-World.git",
-	    "hooks_url": "http://api.github.com/repos/octocat/Hello-World/hooks",
-	    "issue_comment_url": "http://api.github.com/repos/octocat/Hello-World/issues/comments{/number}",
-	    "issue_events_url": "http://api.github.com/repos/octocat/Hello-World/issues/events{/number}",
-	    "issues_url": "http://api.github.com/repos/octocat/Hello-World/issues{/number}",
-	    "keys_url": "http://api.github.com/repos/octocat/Hello-World/keys{/key_id}",
-	    "labels_url": "http://api.github.com/repos/octocat/Hello-World/labels{/name}",
-	    "languages_url": "http://api.github.com/repos/octocat/Hello-World/languages",
-	    "merges_url": "http://api.github.com/repos/octocat/Hello-World/merges",
-	    "milestones_url": "http://api.github.com/repos/octocat/Hello-World/milestones{/number}",
-	    "mirror_url": "git:git.example.com/octocat/Hello-World",
-	    "notifications_url": "http://api.github.com/repos/octocat/Hello-World/notifications{?since, all, participating}",
-	    "pulls_url": "http://api.github.com/repos/octocat/Hello-World/pulls{/number}",
-	    "releases_url": "http://api.github.com/repos/octocat/Hello-World/releases{/id}",
-	    "ssh_url": "git@github.com:octocat/Hello-World.git",
-	    "stargazers_url": "http://api.github.com/repos/octocat/Hello-World/stargazers",
-	    "statuses_url": "http://api.github.com/repos/octocat/Hello-World/statuses/{sha}",
-	    "subscribers_url": "http://api.github.com/repos/octocat/Hello-World/subscribers",
-	    "subscription_url": "http://api.github.com/repos/octocat/Hello-World/subscription",
-	    "svn_url": "https://svn.github.com/octocat/Hello-World",
-	    "tags_url": "http://api.github.com/repos/octocat/Hello-World/tags",
-	    "teams_url": "http://api.github.com/repos/octocat/Hello-World/teams",
-	    "trees_url": "http://api.github.com/repos/octocat/Hello-World/git/trees{/sha}",
-	    "homepage": "https://github.com",
-	    "language": null,
-	    "forks_count": 9,
-	    "stargazers_count": 80,
-	    "watchers_count": 80,
-	    "size": 108,
-	    "default_branch": "master",
-	    "open_issues_count": 0,
-	    "has_issues": true,
-	    "has_wiki": true,
-	    "has_pages": false,
-	    "has_downloads": true,
-	    "pushed_at": "2011-01-26T19:06:43Z",
-	    "created_at": "2011-01-26T19:01:12Z",
-	    "updated_at": "2011-01-26T19:14:43Z",
-	    "permissions": {
-	      "admin": false,
-	      "push": false,
-	      "pull": true
-	    },
-	    "subscribers_count": 42,
-	    "organization": {
-	      "login": "octocat",
-	      "id": 1,
-	      "avatar_url": "https://github.com/images/error/octocat_happy.gif",
-	      "gravatar_id": "",
-	      "url": "https://api.github.com/users/octocat",
-	      "html_url": "https://github.com/octocat",
-	      "followers_url": "https://api.github.com/users/octocat/followers",
-	      "following_url": "https://api.github.com/users/octocat/following{/other_user}",
-	      "gists_url": "https://api.github.com/users/octocat/gists{/gist_id}",
-	      "starred_url": "https://api.github.com/users/octocat/starred{/owner}{/repo}",
-	      "subscriptions_url": "https://api.github.com/users/octocat/subscriptions",
-	      "organizations_url": "https://api.github.com/users/octocat/orgs",
-	      "repos_url": "https://api.github.com/users/octocat/repos",
-	      "events_url": "https://api.github.com/users/octocat/events{/privacy}",
-	      "received_events_url": "https://api.github.com/users/octocat/received_events",
-	      "type": "Organization",
-	      "site_admin": false
-	    },
-	    "parent": {
-	      "id": 1296269,
-	      "owner": {
-	        "login": "octocat",
-	        "id": 1,
-	        "avatar_url": "https://github.com/images/error/octocat_happy.gif",
-	        "gravatar_id": "",
-	        "url": "https://api.github.com/users/octocat",
-	        "html_url": "https://github.com/octocat",
-	        "followers_url": "https://api.github.com/users/octocat/followers",
-	        "following_url": "https://api.github.com/users/octocat/following{/other_user}",
-	        "gists_url": "https://api.github.com/users/octocat/gists{/gist_id}",
-	        "starred_url": "https://api.github.com/users/octocat/starred{/owner}{/repo}",
-	        "subscriptions_url": "https://api.github.com/users/octocat/subscriptions",
-	        "organizations_url": "https://api.github.com/users/octocat/orgs",
-	        "repos_url": "https://api.github.com/users/octocat/repos",
-	        "events_url": "https://api.github.com/users/octocat/events{/privacy}",
-	        "received_events_url": "https://api.github.com/users/octocat/received_events",
-	        "type": "User",
-	        "site_admin": false
-	      },
-	      "name": "Hello-World",
-	      "full_name": "octocat/Hello-World",
-	      "description": "This your first repo!",
-	      "private": false,
-	      "fork": false,
-	      "url": "https://api.github.com/repos/octocat/Hello-World",
-	      "html_url": "https://github.com/octocat/Hello-World",
-	      "archive_url": "http://api.github.com/repos/octocat/Hello-World/{archive_format}{/ref}",
-	      "assignees_url": "http://api.github.com/repos/octocat/Hello-World/assignees{/user}",
-	      "blobs_url": "http://api.github.com/repos/octocat/Hello-World/git/blobs{/sha}",
-	      "branches_url": "http://api.github.com/repos/octocat/Hello-World/branches{/branch}",
-	      "clone_url": "https://github.com/octocat/Hello-World.git",
-	      "collaborators_url": "http://api.github.com/repos/octocat/Hello-World/collaborators{/collaborator}",
-	      "comments_url": "http://api.github.com/repos/octocat/Hello-World/comments{/number}",
-	      "commits_url": "http://api.github.com/repos/octocat/Hello-World/commits{/sha}",
-	      "compare_url": "http://api.github.com/repos/octocat/Hello-World/compare/{base}...{head}",
-	      "contents_url": "http://api.github.com/repos/octocat/Hello-World/contents/{+path}",
-	      "contributors_url": "http://api.github.com/repos/octocat/Hello-World/contributors",
-	      "downloads_url": "http://api.github.com/repos/octocat/Hello-World/downloads",
-	      "events_url": "http://api.github.com/repos/octocat/Hello-World/events",
-	      "forks_url": "http://api.github.com/repos/octocat/Hello-World/forks",
-	      "git_commits_url": "http://api.github.com/repos/octocat/Hello-World/git/commits{/sha}",
-	      "git_refs_url": "http://api.github.com/repos/octocat/Hello-World/git/refs{/sha}",
-	      "git_tags_url": "http://api.github.com/repos/octocat/Hello-World/git/tags{/sha}",
-	      "git_url": "git:github.com/octocat/Hello-World.git",
-	      "hooks_url": "http://api.github.com/repos/octocat/Hello-World/hooks",
-	      "issue_comment_url": "http://api.github.com/repos/octocat/Hello-World/issues/comments{/number}",
-	      "issue_events_url": "http://api.github.com/repos/octocat/Hello-World/issues/events{/number}",
-	      "issues_url": "http://api.github.com/repos/octocat/Hello-World/issues{/number}",
-	      "keys_url": "http://api.github.com/repos/octocat/Hello-World/keys{/key_id}",
-	      "labels_url": "http://api.github.com/repos/octocat/Hello-World/labels{/name}",
-	      "languages_url": "http://api.github.com/repos/octocat/Hello-World/languages",
-	      "merges_url": "http://api.github.com/repos/octocat/Hello-World/merges",
-	      "milestones_url": "http://api.github.com/repos/octocat/Hello-World/milestones{/number}",
-	      "mirror_url": "git:git.example.com/octocat/Hello-World",
-	      "notifications_url": "http://api.github.com/repos/octocat/Hello-World/notifications{?since, all, participating}",
-	      "pulls_url": "http://api.github.com/repos/octocat/Hello-World/pulls{/number}",
-	      "releases_url": "http://api.github.com/repos/octocat/Hello-World/releases{/id}",
-	      "ssh_url": "git@github.com:octocat/Hello-World.git",
-	      "stargazers_url": "http://api.github.com/repos/octocat/Hello-World/stargazers",
-	      "statuses_url": "http://api.github.com/repos/octocat/Hello-World/statuses/{sha}",
-	      "subscribers_url": "http://api.github.com/repos/octocat/Hello-World/subscribers",
-	      "subscription_url": "http://api.github.com/repos/octocat/Hello-World/subscription",
-	      "svn_url": "https://svn.github.com/octocat/Hello-World",
-	      "tags_url": "http://api.github.com/repos/octocat/Hello-World/tags",
-	      "teams_url": "http://api.github.com/repos/octocat/Hello-World/teams",
-	      "trees_url": "http://api.github.com/repos/octocat/Hello-World/git/trees{/sha}",
-	      "homepage": "https://github.com",
-	      "language": null,
-	      "forks_count": 9,
-	      "stargazers_count": 80,
-	      "watchers_count": 80,
-	      "size": 108,
-	      "default_branch": "master",
-	      "open_issues_count": 0,
-	      "has_issues": true,
-	      "has_wiki": true,
-	      "has_pages": false,
-	      "has_downloads": true,
-	      "pushed_at": "2011-01-26T19:06:43Z",
-	      "created_at": "2011-01-26T19:01:12Z",
-	      "updated_at": "2011-01-26T19:14:43Z",
-	      "permissions": {
-	        "admin": false,
-	        "push": false,
-	        "pull": true
-	      }
-	    },
-	    "source": {
-	      "id": 1296269,
-	      "owner": {
-	        "login": "octocat",
-	        "id": 1,
-	        "avatar_url": "https://github.com/images/error/octocat_happy.gif",
-	        "gravatar_id": "",
-	        "url": "https://api.github.com/users/octocat",
-	        "html_url": "https://github.com/octocat",
-	        "followers_url": "https://api.github.com/users/octocat/followers",
-	        "following_url": "https://api.github.com/users/octocat/following{/other_user}",
-	        "gists_url": "https://api.github.com/users/octocat/gists{/gist_id}",
-	        "starred_url": "https://api.github.com/users/octocat/starred{/owner}{/repo}",
-	        "subscriptions_url": "https://api.github.com/users/octocat/subscriptions",
-	        "organizations_url": "https://api.github.com/users/octocat/orgs",
-	        "repos_url": "https://api.github.com/users/octocat/repos",
-	        "events_url": "https://api.github.com/users/octocat/events{/privacy}",
-	        "received_events_url": "https://api.github.com/users/octocat/received_events",
-	        "type": "User",
-	        "site_admin": false
-	      },
-	      "name": "Hello-World",
-	      "full_name": "octocat/Hello-World",
-	      "description": "This your first repo!",
-	      "private": false,
-	      "fork": false,
-	      "url": "https://api.github.com/repos/octocat/Hello-World",
-	      "html_url": "https://github.com/octocat/Hello-World",
-	      "archive_url": "http://api.github.com/repos/octocat/Hello-World/{archive_format}{/ref}",
-	      "assignees_url": "http://api.github.com/repos/octocat/Hello-World/assignees{/user}",
-	      "blobs_url": "http://api.github.com/repos/octocat/Hello-World/git/blobs{/sha}",
-	      "branches_url": "http://api.github.com/repos/octocat/Hello-World/branches{/branch}",
-	      "clone_url": "https://github.com/octocat/Hello-World.git",
-	      "collaborators_url": "http://api.github.com/repos/octocat/Hello-World/collaborators{/collaborator}",
-	      "comments_url": "http://api.github.com/repos/octocat/Hello-World/comments{/number}",
-	      "commits_url": "http://api.github.com/repos/octocat/Hello-World/commits{/sha}",
-	      "compare_url": "http://api.github.com/repos/octocat/Hello-World/compare/{base}...{head}",
-	      "contents_url": "http://api.github.com/repos/octocat/Hello-World/contents/{+path}",
-	      "contributors_url": "http://api.github.com/repos/octocat/Hello-World/contributors",
-	      "downloads_url": "http://api.github.com/repos/octocat/Hello-World/downloads",
-	      "events_url": "http://api.github.com/repos/octocat/Hello-World/events",
-	      "forks_url": "http://api.github.com/repos/octocat/Hello-World/forks",
-	      "git_commits_url": "http://api.github.com/repos/octocat/Hello-World/git/commits{/sha}",
-	      "git_refs_url": "http://api.github.com/repos/octocat/Hello-World/git/refs{/sha}",
-	      "git_tags_url": "http://api.github.com/repos/octocat/Hello-World/git/tags{/sha}",
-	      "git_url": "git:github.com/octocat/Hello-World.git",
-	      "hooks_url": "http://api.github.com/repos/octocat/Hello-World/hooks",
-	      "issue_comment_url": "http://api.github.com/repos/octocat/Hello-World/issues/comments{/number}",
-	      "issue_events_url": "http://api.github.com/repos/octocat/Hello-World/issues/events{/number}",
-	      "issues_url": "http://api.github.com/repos/octocat/Hello-World/issues{/number}",
-	      "keys_url": "http://api.github.com/repos/octocat/Hello-World/keys{/key_id}",
-	      "labels_url": "http://api.github.com/repos/octocat/Hello-World/labels{/name}",
-	      "languages_url": "http://api.github.com/repos/octocat/Hello-World/languages",
-	      "merges_url": "http://api.github.com/repos/octocat/Hello-World/merges",
-	      "milestones_url": "http://api.github.com/repos/octocat/Hello-World/milestones{/number}",
-	      "mirror_url": "git:git.example.com/octocat/Hello-World",
-	      "notifications_url": "http://api.github.com/repos/octocat/Hello-World/notifications{?since, all, participating}",
-	      "pulls_url": "http://api.github.com/repos/octocat/Hello-World/pulls{/number}",
-	      "releases_url": "http://api.github.com/repos/octocat/Hello-World/releases{/id}",
-	      "ssh_url": "git@github.com:octocat/Hello-World.git",
-	      "stargazers_url": "http://api.github.com/repos/octocat/Hello-World/stargazers",
-	      "statuses_url": "http://api.github.com/repos/octocat/Hello-World/statuses/{sha}",
-	      "subscribers_url": "http://api.github.com/repos/octocat/Hello-World/subscribers",
-	      "subscription_url": "http://api.github.com/repos/octocat/Hello-World/subscription",
-	      "svn_url": "https://svn.github.com/octocat/Hello-World",
-	      "tags_url": "http://api.github.com/repos/octocat/Hello-World/tags",
-	      "teams_url": "http://api.github.com/repos/octocat/Hello-World/teams",
-	      "trees_url": "http://api.github.com/repos/octocat/Hello-World/git/trees{/sha}",
-	      "homepage": "https://github.com",
-	      "language": null,
-	      "forks_count": 9,
-	      "stargazers_count": 80,
-	      "watchers_count": 80,
-	      "size": 108,
-	      "default_branch": "master",
-	      "open_issues_count": 0,
-	      "has_issues": true,
-	      "has_wiki": true,
-	      "has_pages": false,
-	      "has_downloads": true,
-	      "pushed_at": "2011-01-26T19:06:43Z",
-	      "created_at": "2011-01-26T19:01:12Z",
-	      "updated_at": "2011-01-26T19:14:43Z",
-	      "permissions": {
-	        "admin": false,
-	        "push": false,
-	        "pull": true
-	      }
-	    }
-	  }
-
-	};
-
-	exports['default'] = data;
-	module.exports = exports['default'];
+	"use strict";Object.defineProperty(exports,"__esModule",{value:true});var data={picfair:{header:{title:"picfair",logo:"/img/logo.png",avatar:"/img/avatar.gif"},collections:[{name:'Items',items:[{"_index":"picfair-pic-development-picfair_development_201603_20160331-110500","_type":"pic","_id":"12866","_score":null,"_source":{"search_rank_score":0.87506899977515,"quality_ratio":0.87534499887575,"aspect_ratio":"landscape","formatted_tags":"saltador spain bull jump bullring danger","price":10,"trending_rank":8,"image_quality_prediction_factor":16,"user":{"id":1350,"name":"DianaG","photo_url":"\/\/res.cloudinary.com\/fleetnation\/image\/upload\/c_fill,g_center,h_120,w_120\/v1380445165\/seik7yef3qubfdubfyww.jpg","picusername":"DianaG"},"id":12866,"title":"Saltador","authorised":true,"created_at":"2013-09-29T09:20:00.613Z","updated_at":"2016-03-29T21:26:55.370Z","height":2308,"model":"PENTAX K-r","width":3568,"url":"saltador","user_id":1350,"pic_views_count":9169,"caption":"A Saltador jumping over a huge bull in a ring during Magdalena Festival, Castellón de la Plana, Spain ","problem":false,"cloudinary_id":"v1380446401\/l4vnigqec4shbspsgo7u.jpg","trending_count":8,"starred":true,"recently_starred":false,"top_rank":0,"tweeted":true,"trending_score":0.2992779353514,"picked":true,"stock":false,"tags_all":"saltador, spain, bull, jump, bullring, danger","deleted_at":null,"is_moderated":true,"starred_at":null,"starred_email":true,"post_pics_count":3,"problem_reason":"","md5":null,"iptc":false,"partner_link_id":null,"state":"complete","app_version":1,"slug":null,"tags":["saltador","spain","bull","jump","bullring","danger"],"colors":["#d9b665","#dab560","#d3ab5d","#cca959","#c7a666","#b59351","#e4c273","#cea953","#d6b46f","#31281d","#211b19","#7c6035","#b39d72","#e8e2ce","#6c636a"],"source":"upload","third_party":false,"wavebreak_id":null,"wavebreak_key":null,"licence_types":["standard"],"faces":false,"model_release":false,"license_reviewed_at":null,"plus":false,"standard":true,"editorial":false,"image_quality_judgment":null,"image_quality_judgment_required":null,"image_quality_prediction":4,"image_quality_prediction_updated_at":"2016-03-29T21:28:59.354Z"},"sort":[9169]},{"_index":"picfair-pic-development-picfair_development_201603_20160331-110500","_type":"pic","_id":"30570","_score":null,"_source":{"search_rank_score":0.88415126919776,"quality_ratio":0.92075634598879,"aspect_ratio":"landscape","formatted_tags":"superman children new zealand nelson superheroes costume fancy dress train tracks travel travelling rgadventure","price":15,"trending_rank":8,"image_quality_prediction_factor":16,"user":{"id":963,"name":"Charlie Burness","photo_url":"\/\/res.cloudinary.com\/fleetnation\/image\/upload\/c_fill,g_center,h_120,w_120\/v1399818013\/dvdwhkcyspcgad2yejwh.jpg","picusername":"Charlie Burness"},"id":30570,"title":"Superman","authorised":true,"created_at":"2014-02-09T19:35:34.151Z","updated_at":"2016-03-29T21:27:00.404Z","height":3000,"model":"Canon PowerShot SX20 IS","width":4000,"url":"superman","user_id":963,"pic_views_count":7958,"caption":"Superman","problem":false,"cloudinary_id":"v1391974535\/y9wmzusxiddkosl7rlzp.jpg","trending_count":8,"starred":true,"recently_starred":false,"top_rank":0,"tweeted":true,"trending_score":0.26948991039154,"picked":true,"stock":false,"tags_all":"superman, children, new zealand, nelson, superheroes, costume, fancy dress, train tracks, travel, travelling, rgadventure","deleted_at":null,"is_moderated":true,"starred_at":null,"starred_email":true,"post_pics_count":2,"problem_reason":null,"md5":null,"iptc":false,"partner_link_id":null,"state":"complete","app_version":1,"slug":null,"tags":["superman","children","new zealand","nelson","superheroes","costume","fancy dress","train tracks","travel","travelling","rgadventure"],"colors":["#f5f4eb","#1a1415","#464f60","#2b3140","#5a6a89","#121524","#35292a","#9d363f","#abb6c8","#b0a185","#ccd9db","#1243d9","#d8d2be","#3a352c","#dac5c6"],"source":"upload","third_party":false,"wavebreak_id":null,"wavebreak_key":null,"licence_types":["standard"],"faces":false,"model_release":false,"license_reviewed_at":null,"plus":false,"standard":true,"editorial":false,"image_quality_judgment":null,"image_quality_judgment_required":null,"image_quality_prediction":4,"image_quality_prediction_updated_at":"2016-03-29T21:28:59.354Z"},"sort":[7958]},{"_index":"picfair-pic-development-picfair_development_201603_20160331-110500","_type":"pic","_id":"34873","_score":null,"_source":{"search_rank_score":0.89404573458005,"quality_ratio":0.97022867290023,"aspect_ratio":"landscape","formatted_tags":"idj photography idjphotography photo photos image images capture trafalgar square london break dancing breakdancing street dance black white jump mi-air mid air performance live","price":5,"trending_rank":7,"image_quality_prediction_factor":null,"user":{"id":384,"name":"Darren Johnson - iDJ Photography","photo_url":"\/\/pbs.twimg.com\/profile_images\/428290864423510016\/l6cU3clh_bigger.png","picusername":"Darren Johnson - iDJ Photography"},"id":34873,"title":"Meanwhile in Trafalgar Square","authorised":true,"created_at":"2014-03-03T13:25:59.324Z","updated_at":"2016-03-29T21:26:59.241Z","height":2848,"model":"NIKON D5000","width":4288,"url":"meanwhile-in-trafalgar-square","user_id":384,"pic_views_count":7854,"caption":"Meanwhile in Trafalgar Square","problem":false,"cloudinary_id":"v1393853160\/qlrcb4wwuxbxqiojvoew.jpg","trending_count":7,"starred":true,"recently_starred":false,"top_rank":0,"tweeted":true,"trending_score":0.41007764840958,"picked":true,"stock":false,"tags_all":"idj, photography, idjphotography, photo, Photos, image, images, Capture, trafalgar square, London, break, dancing, breakdancing, street, dance, black, white, jump, mi-air, mid, air, performance, live","deleted_at":null,"is_moderated":true,"starred_at":null,"starred_email":true,"post_pics_count":2,"problem_reason":null,"md5":null,"iptc":false,"partner_link_id":null,"state":"complete","app_version":1,"slug":null,"tags":["idj","photography","idjphotography","photo","photos","image","images","capture","trafalgar square","london","break","dancing","breakdancing","street","dance","black","white","jump","mi-air","mid","air","performance","live"],"colors":["#a8a8a8","#b6b6b6","#c8c8c8","#363636","#9a9a9a","#d4d4d4","#6f6f6f","#888888","#575757","#a7adad","#474747","#2d2d2d","#eaeaea","#a6a7a7","#999a9a"],"source":"upload","third_party":false,"wavebreak_id":null,"wavebreak_key":null,"licence_types":["standard"],"faces":false,"model_release":false,"license_reviewed_at":null,"plus":false,"standard":true,"editorial":false,"image_quality_judgment":4,"image_quality_judgment_required":null,"image_quality_prediction":null,"image_quality_prediction_updated_at":null},"sort":[7854]},{"_index":"picfair-pic-development-picfair_development_201603_20160331-110500","_type":"pic","_id":"32021","_score":null,"_source":{"search_rank_score":0.86127181098742,"quality_ratio":0.80635905493712,"aspect_ratio":"landscape","formatted_tags":"skiing aerial sochi winter olympics fog","price":5,"trending_rank":362,"image_quality_prediction_factor":16,"user":{"id":2140,"name":"Nina Zietman","photo_url":"\/\/res.cloudinary.com\/fleetnation\/image\/upload\/c_fill,g_center,h_120,w_120\/v1390071576\/rqpzd2v5b3qjwaxpevxl.jpg","picusername":"Nina Zietman"},"id":32021,"title":"Fog Aerials in Sochi","authorised":true,"created_at":"2014-02-17T09:40:36.836Z","updated_at":"2016-03-29T21:27:00.510Z","height":4912,"model":"NIKON D800","width":7360,"url":"fog-aerials-in-sochi","user_id":2140,"pic_views_count":7578,"caption":"Aerial skiiers in training at Rosa Khutor Extreme Park for Winter Olympics in Sochi, Russia.","problem":false,"cloudinary_id":"v1392630037\/e4jbepiqpi4bclu4txrb.jpg","trending_count":12,"starred":true,"recently_starred":false,"top_rank":350,"tweeted":true,"trending_score":0.34504326730657,"picked":true,"stock":false,"tags_all":"skiing, aerial, sochi, Winter Olympics, Fog","deleted_at":null,"is_moderated":true,"starred_at":null,"starred_email":true,"post_pics_count":2,"problem_reason":null,"md5":null,"iptc":false,"partner_link_id":null,"state":"complete","app_version":1,"slug":null,"tags":["skiing","aerial","sochi","winter olympics","fog"],"colors":["#4a4f4e","#232930","#343a3a","#0f141e","#64665d","#696f6a","#8f9185","#e3e4cd","#30363b","#b0b1a0","#252c2f","#464a4e","#282926","#0f161a","#969d94"],"source":"upload","third_party":false,"wavebreak_id":null,"wavebreak_key":null,"licence_types":["standard"],"faces":false,"model_release":false,"license_reviewed_at":null,"plus":false,"standard":true,"editorial":false,"image_quality_judgment":null,"image_quality_judgment_required":null,"image_quality_prediction":4,"image_quality_prediction_updated_at":"2016-03-29T21:28:59.354Z"},"sort":[7578]},{"_index":"picfair-pic-development-picfair_development_201603_20160331-110500","_type":"pic","_id":"31194","_score":null,"_source":{"search_rank_score":0.87277973597564,"quality_ratio":0.86389867987819,"aspect_ratio":"landscape","formatted_tags":"butterfly proboscis insect macro close-up drink nectar colourful skipper wildlife","price":3,"trending_rank":20,"image_quality_prediction_factor":16,"user":{"id":2463,"name":"Sam Fabian","photo_url":"\/\/res.cloudinary.com\/fleetnation\/image\/upload\/c_fill,g_center,h_120,w_120\/v1392225713\/l6gfejvangdh7odlmudv.jpg","picusername":"Sam Fabian"},"id":31194,"title":"Small Skipper Butterfly","authorised":true,"created_at":"2014-02-12T17:50:24.429Z","updated_at":"2016-03-29T21:26:59.836Z","height":3085,"model":"Canon EOS 7D","width":4627,"url":"small-skipper-butterfly","user_id":2463,"pic_views_count":7552,"caption":"The small skipper is common in the UK and has a very wide distribution. It is seen here using its proboscis to gather nectar from a flower.","problem":false,"cloudinary_id":"v1392227426\/ksmmolrbn3sgtqojjlqd.jpg","trending_count":7,"starred":true,"recently_starred":false,"top_rank":13,"tweeted":true,"trending_score":0.38468020775561,"picked":true,"stock":false,"tags_all":"Butterfly, proboscis, insect, Macro, close-up, drink, nectar, colourful, Skipper, wildlife","deleted_at":null,"is_moderated":true,"starred_at":null,"starred_email":true,"post_pics_count":2,"problem_reason":"","md5":null,"iptc":false,"partner_link_id":null,"state":"complete","app_version":1,"slug":null,"tags":["butterfly","proboscis","insect","macro","close-up","drink","nectar","colourful","skipper","wildlife"],"colors":["#031a04","#0d4718","#257138","#676b2c","#e6cf77","#bc7ecd","#c0b3e7","#222509","#aea663","#90b1a4","#04a33e","#d184e5","#6c3168","#e5bb1d","#333953"],"source":"upload","third_party":false,"wavebreak_id":null,"wavebreak_key":null,"licence_types":["standard"],"faces":false,"model_release":false,"license_reviewed_at":null,"plus":false,"standard":true,"editorial":false,"image_quality_judgment":null,"image_quality_judgment_required":null,"image_quality_prediction":4,"image_quality_prediction_updated_at":"2016-03-29T21:28:59.354Z"},"sort":[7552]},{"_index":"picfair-pic-development-picfair_development_201603_20160331-110500","_type":"pic","_id":"34600","_score":null,"_source":{"search_rank_score":0.88169033898653,"quality_ratio":0.90845169493264,"aspect_ratio":"landscape","formatted_tags":"kumbh mela india people travel crowd colour adventure festival","price":5,"trending_rank":4,"image_quality_prediction_factor":16,"user":{"id":2663,"name":"Kalyani Lodhia","photo_url":"\/\/graph.facebook.com\/568897406\/picture","picusername":"Kalyani Lodhia"},"id":34600,"title":"Crowd","authorised":true,"created_at":"2014-02-28T23:58:42.341Z","updated_at":"2016-03-29T21:26:59.216Z","height":3264,"model":"NEX-5N","width":4912,"url":"crowd-1","user_id":2663,"pic_views_count":7502,"caption":"Kumbh Mela 2013, Allahabad","problem":false,"cloudinary_id":"v1393631922\/eodiow6mvjljnfjo1d7l.jpg","trending_count":4,"starred":true,"recently_starred":false,"top_rank":0,"tweeted":true,"trending_score":0.36899355090718,"picked":true,"stock":false,"tags_all":"Kumbh Mela, india, people, travel, crowd, colour, adventure, Festival","deleted_at":null,"is_moderated":true,"starred_at":null,"starred_email":true,"post_pics_count":2,"problem_reason":null,"md5":null,"iptc":false,"partner_link_id":null,"state":"complete","app_version":1,"slug":null,"tags":["kumbh mela","india","people","travel","crowd","colour","adventure","festival"],"colors":["#3d1c13","#864d39","#f1f3f8","#f6e99d","#b14417","#eff4f5","#be9463","#be8b7d","#825b32","#ebb532","#452b11","#282e47","#f6e6de","#365c63","#979db9"],"source":"upload","third_party":false,"wavebreak_id":null,"wavebreak_key":null,"licence_types":["standard"],"faces":false,"model_release":false,"license_reviewed_at":null,"plus":false,"standard":true,"editorial":false,"image_quality_judgment":null,"image_quality_judgment_required":null,"image_quality_prediction":4,"image_quality_prediction_updated_at":"2016-03-29T21:28:59.354Z"},"sort":[7502]},{"_index":"picfair-pic-development-picfair_development_201603_20160331-110500","_type":"pic","_id":"23928","_score":null,"_source":{"search_rank_score":0.89113761801655,"quality_ratio":0.95568809008276,"aspect_ratio":"portrait","formatted_tags":"busker keyboard black and white london thames singing old man man","price":5,"trending_rank":-8,"image_quality_prediction_factor":16,"user":{"id":79,"name":"Andy Tyler","photo_url":"\/\/res.cloudinary.com\/fleetnation\/image\/upload\/c_fill,g_center,h_120,w_120\/v1420567858\/t8u38va13xsjvotsuckf.jpg","picusername":"Andy Tyler"},"id":23928,"title":"Keyboard Busker on the Thames","authorised":true,"created_at":"2014-01-06T14:32:43.063Z","updated_at":"2016-03-29T22:30:15.877Z","height":5760,"model":null,"width":3840,"url":"keyboard-busker-on-the-thames","user_id":79,"pic_views_count":7443,"caption":"This old man busks on the banks of the river Thames in London, playing classic songs from acts like the Beatles on his little keyboard.","problem":false,"cloudinary_id":"v1389018764\/z4p5gthqpu46osqgygiu.jpg","trending_count":12,"starred":true,"recently_starred":false,"top_rank":-20,"tweeted":true,"trending_score":0.24409246973758,"picked":true,"stock":false,"tags_all":"busker, keyboard, black and white, London, thames, singing, old man, man","deleted_at":null,"is_moderated":true,"starred_at":null,"starred_email":true,"post_pics_count":2,"problem_reason":"","md5":null,"iptc":false,"partner_link_id":null,"state":"complete","app_version":1,"slug":null,"tags":["busker","keyboard","black and white","london","thames","singing","old man","man"],"colors":["#575757","#676767","#888888","#4a4a4a","#979797","#787878","#0a0a0a","#a7a7a7","#282828","#b7b7b7","#171717","#373737","#c8c8c8","#f4f4f4","#333939"],"source":"upload","third_party":false,"wavebreak_id":null,"wavebreak_key":null,"licence_types":["standard"],"faces":false,"model_release":false,"license_reviewed_at":null,"plus":false,"standard":true,"editorial":false,"image_quality_judgment":null,"image_quality_judgment_required":null,"image_quality_prediction":4,"image_quality_prediction_updated_at":"2016-03-29T22:33:57.797Z"},"sort":[7443]},{"_index":"picfair-pic-development-picfair_development_201603_20160331-110500","_type":"pic","_id":"152191","_score":null,"_source":{"search_rank_score":0.21069165807325,"quality_ratio":0.55345829036627,"aspect_ratio":"landscape","formatted_tags":"image creativity artistic creative different original special unique photography edward olive edward olive edwardolive arty art alternative fotografia artistica photographie artistique artistic photography image photo photos photographic foto fotos pro profesional professional quality pro picture picture pictures image bank stock photo stock image photo stock imagen photographer fotograf fotografia photographie photographe design concept conceptual conceived edouard olive eduardo olive oliver edward oliver award winning international author rf royalty free libre de derechos sin royalties photo type digital digital photo digital photography digital image dslr slr reflex camera photoshop raw canon eos ef retro retro feel nostalgia nostalgic vintage old antique age aged timeless time events party partying parties fete fiesta event social wedding love amor amour amore loving lovers marriage mariage hochzeit casamento casament boda matrimonio bride bridal grain texture mood feeling idea traub weddings marriages groom brides grooms wedding couple marriage couple novios mariés hold holding joined connected lovers amantes amants union together connection connect romance romantic ideal touch touching combined traditional ceremony wed married just married atmosphere classic classical tradition ambience ambiente starting out new start fashion fashionable clothes moda mode beauty magazine revista revue clothing ropa vetements female young woman lady dama femme mujer single woman donna femenine young female crotch pussy pubis vagina chatte sex sexy x x rated adult content nude over 18 adult porn porno playboy glamour glamor nudity adults only snatch tush muff box beaver pelvis pelvic cupid xxx frontal full frontal complete nudity desnudo integral eve adam and eve body parts bottom rear ass arse backside culo cul bunda booty behind back fesses sexy female libidinous libido lust lusty lustful risqué slinky spicy spice heat steamy suggestive suggestion suggest titillating titillate voluptuous curvy curves curve alluring anonymous atmospheric attractive bare beautiful casual caucasian white woman contemplative dame detail dreaming dream-like dreamy dreamlike elegance elegant emotion emotional emotive erotic ethereal euphoria feminine glamorous glamourous appealing model one woman pale skin passion pensive perfect perfection person pleasure pretty seductive sensual sensuality sexuality stunning style styling temptation thoughtful vogue women pinup shapely slender slim underwear semi nude film analog erotica erotique fine art nue desnudo provocative form body skin desire lingerie young lady eros female form shape fraulein mademoiselle grainy shadows light adult female people cinematic sensualidad sensualité film photography analog photo nondigital non digital female body dream fantasy voyeur voyeuristic cute lovable ambrosial appeal sex appeal sexual attract attracting  attractive captivating charming darling dear delectable delicious delightful     dishy fetching heavenly hot luscious pleasing precious suave  amorous loving affectionate aphrodisiac boy crazy girl crazy have a crush on      horny passionate desirable adorable allure entice enticing fascinating salacious smut smutty beckon beckoning bewitch bewitching captivate forbidden comely enchant enchanting invite inviting     looker lovely luring magnetic magnetism mesmeric pleasant please provoke seduction seduce stun tantalizing     teasing tease tempt tempting sexi pornographic parental advisory for adults star inviting modelling top model supermodel provoking racy seducing sensulaity sensuous arousing arous arousal come-hither flirt flirty flirtatious kissable sheet draps sabana sheets cotton white bedding bedroom cuarto chambre bed bedtime lit cama beds young","price":35,"trending_rank":-47,"image_quality_prediction_factor":1,"user":{"id":3685,"name":"Edward Olive","photo_url":"\/\/res.cloudinary.com\/fleetnation\/image\/upload\/c_fill,g_center,h_120,w_120\/v1429015527\/wwxejffspdpcwvbzvl8r.jpg","picusername":"Edward Olive"},"id":152191,"title":"Sexy bride nude dressing wedding marriage day","authorised":true,"created_at":"2014-11-25T11:06:33.157Z","updated_at":"2016-03-30T00:47:04.884Z","height":771,"model":"Canon EOS 5D Mark II","width":1600,"url":"91501833-sexy-bride-nude-dressing-wedding-marriage-day","user_id":3685,"pic_views_count":7294,"caption":"Digital photograph rf stock image photo by Edward Olive artistic, creative, original stock images, photos and fine art prints wedding photographer for weddings and image bank. Please note this is a 72 dpi 1600 pixels image ideal for website and online use. If a physical print quality photo is required an email can be sent to the photographer via edwardolive@hotmail.com and a larger pixel full resolution (higher priced) image can be uploaded for purchase on this website. Edward Olive professional bridal photography studios and photographic studio work. Fotografo de boda, fotos modernas, artisticas, creativas, diferentes, espontaneas, sin poses, naturales, fotoperiodismo, reportajes de fotos y video para bodas, fotografia corporativa profesional publicitaria y banco de imagenes de fotostock. Photographe de photographie artistique de mariage et banque de images stock. Fotograf Spanien fur Hochseit Hochseitsfotgraf. Traub fotograf. #picfair #edwardolive @edwardolive www.edwardolive.eu","problem":false,"cloudinary_id":"v1416913591\/rgq1zwwnbo984lwnuzuo.jpg","trending_count":253,"starred":false,"recently_starred":false,"top_rank":-300,"tweeted":false,"trending_score":null,"picked":false,"stock":true,"tags_all":"Image creativity,\nartistic, creative, different, original, special, unique, photography, edward olive, edward, olive, edwardolive, arty, art, alternative, fotografia artistica, photographie artistique, artistic photography, image, photo, photos, photographic, foto, fotos,pro, profesional, professional, quality, pro picture, picture, pictures, image bank, stock photo, stock image, photo stock, imagen, photographer, fotograf, fotografia, photographie, photographe, design, concept, conceptual, conceived,  edouard olive, eduardo olive, oliver, edward, olive, edward oliver, award winning, international, author, rf,royalty free, libre de derechos, sin royalties, \nPhoto type,\nDigital,\ndigital, digital photo, digital photography, digital image, dslr, slr, reflex camera,digital image, dslr, photoshop, raw, canon, eos, ef,\nretro, retro feel, retro, nostalgia, nostalgic, vintage, old, antique, age, aged, timeless, time, \nEvents,\nparty, partying, parties, fete, fiesta, event,fete, social, \nWedding, \nlove, amor, amour, amore,loving lovers, wedding, marriage, mariage, hochzeit, casamento, casament, boda, matrimonio, bride, bridal, grain, texture, mood, feeling, timeless, concept, idea, edward olive, wedding, mariage, casament, casamento, Hochzeit, Traub, marriage, weddings, marriages, bride, groom, brides, grooms, bridal, wedding couple, marriage couple, novios, mariés, hold, holding, joined, connected, lovers, amantes, amants, union, together, connection, connect, romance, romantic, ideal, touch, touching, combined, traditional, ceremony, wed, married, just married, mood, atmosphere, timeless, classic, classical, tradition, ambience, ambiente, starting out, new start,\nmarriage, mariage, wedding, hochzeit, boda, casament, Fashion,\nfashionable, clothes, moda, mode, beauty, magazine, revista, revue, clothing, ropa, vetements, Female,\nyoung woman, lady, dama, femme, mujer, female,  single, woman, lady, mujer, donna, femme, femenine,  \nYoung female,crotch, pussy, pubis, vagina, chatte, sex, sexy, x, x rated, adult content, nude, female, woman, lady, over 18, adult, porn, porno, playboy, glamour, glamor, nude, nudity, adults only, snatch, tush, muff, box, beaver, pelvis, pelvic, cupid, xxx, frontal, full frontal, complete nudity, desnudo integral, eve, adam and eve, Body parts,\nbottom, rear, ass, arse, backside, culo, cul, bunda, booty, behind, back, fesses, \nSexy female,\nlibidinous, libido, lust, lusty, lustful, risqué, slinky, spicy, spice, heat, steamy, suggestive, suggestion, suggest, titillating, titillate, voluptuous, curvy, curves, curve,\nadult, alluring, anonymous, atmospheric, attractive, bare, beautiful, beauty, body parts, casual, caucasian, white woman, contemplative, dame, detail, dreaming, dream-like, dreamy, dreamlike, elegance, elegant, emotion, emotional, emotive, erotic, ethereal, euphoria, female, feminine, glamour, glamor, glamorous, glamourous, attractive, appealing, model, one woman, pale skin, passion, pensive, perfect, perfection, person, pleasure, pretty, retro, romance, romantic, seductive, sensual, sensuality, sexuality, sexy, stunning, style, styling, temptation, thoughtful, vintage, vogue, Woman, women, Young woman, playboy, pinup, curvy, shapely, slender, slim, curves,  sexy, lady, underwear, nude, semi nude, erotic, film, analog, female, woman, lady, erotica, erotique, fine art, nue, desnudo, provocative, sensual, sensuality, form, beauty, body, skin, lust, desire, adult, lingerie, underwear, edward olive, photo, photography, art, artistic, young lady, eros, desire, female form, form, body, shape, curves, curvy, lady, donna, mujer, femme, Fraulein, mademoiselle, grain, texture, grainy, shadows, light, adult, adults only, adult female, adult content, people, person, edward olive, edwardolive, cinematic, atmosphere, ambiente, ambience, alternative, sensuality, sensualidad, sensualité, vintage, film photography, analog photo, nondigital, non digital, female body, beauty, beautiful, lady, provocative, skin, dream, dreamy, fantasy, mood, feeling, timeless, concept, idea, voyeur, voyeuristic, cute, lovable, ambrosial, appeal, sex appeal, sexual, appealing, attract, attracting  attractive, captivating, charming, cute, darling, dear, delectable, delicious, delightful     dishy, dreamy, fetching, heavenly, hot, luscious, pleasing, precious, sexy, suave  amorous, loving, affectionate, aphrodisiac, boy crazy, erotic, girl crazy, have a crush on      horny, hot, lustful, passionate, desirable, seductive, adorable, alluring, allure, beauty,  beautiful, entice, enticing, fascinating, fetching, sexy, salacious, smut, smutty, steamy, x rated, adorable, allure, alluring, beckon, beckoning, bewitch, bewitching, captivate, forbidden, desire, captivating, comely, enchant, enchanting, entice, enticing, invite, inviting     looker, lovely, luring, magnetic, magnetism,  mesmeric, pleasant, please, pleasing,  pretty, provoke, provocative, seduction, seduce, seductive, stun, stunning, tantalizing     teasing, tease, tempt, tempting,\nyoung woman, lady, dama, femme, mujer, female, femenine,  sex, sexi, porno, pornographic, x, x rated, xxx, adult content, parental advisory, adult content, adult, for adults, hot, star, inviting, model, modelling, top model, supermodel,   provocative, provoke, provoking, racy, seductive, seduce, seducing, sensual, sensulaity, sensuous, arousing, arous, arousal, come-hither, flirt, flirty, flirtatious, kissable,     \nsheet, draps, sabana, sheets, cotton, white, bedding, bedroom, cuarto, chambre, \nbed, bedtime, lit, cama, bedding, beds, \n\nwoman, young, female, lady,\n\ncasamento, matrimonio, traub,\n","deleted_at":null,"is_moderated":false,"starred_at":null,"starred_email":false,"post_pics_count":0,"problem_reason":"","md5":null,"iptc":true,"partner_link_id":null,"state":"complete","app_version":1,"slug":"sexy-bride-nude-dressing-wedding-marriage-day","tags":["image creativity","artistic","creative","different","original","special","unique","photography","edward olive","edward","olive","edwardolive","arty","art","alternative","fotografia artistica","photographie artistique","artistic photography","image","photo","photos","photographic","foto","fotos","pro","profesional","professional","quality","pro picture","picture","pictures","image bank","stock photo","stock image","photo stock","imagen","photographer","fotograf","fotografia","photographie","photographe","design","concept","conceptual","conceived","edouard olive","eduardo olive","oliver","edward oliver","award winning","international","author","rf","royalty free","libre de derechos","sin royalties","photo type","digital","digital photo","digital photography","digital image","dslr","slr","reflex camera","photoshop","raw","canon","eos","ef","retro","retro feel","nostalgia","nostalgic","vintage","old","antique","age","aged","timeless","time","events","party","partying","parties","fete","fiesta","event","social","wedding","love","amor","amour","amore","loving lovers","marriage","mariage","hochzeit","casamento","casament","boda","matrimonio","bride","bridal","grain","texture","mood","feeling","idea","traub","weddings","marriages","groom","brides","grooms","wedding couple","marriage couple","novios","mariés","hold","holding","joined","connected","lovers","amantes","amants","union","together","connection","connect","romance","romantic","ideal","touch","touching","combined","traditional","ceremony","wed","married","just married","atmosphere","classic","classical","tradition","ambience","ambiente","starting out","new start","fashion","fashionable","clothes","moda","mode","beauty","magazine","revista","revue","clothing","ropa","vetements","female","young woman","lady","dama","femme","mujer","single","woman","donna","femenine","young female","crotch","pussy","pubis","vagina","chatte","sex","sexy","x","x rated","adult content","nude","over 18","adult","porn","porno","playboy","glamour","glamor","nudity","adults only","snatch","tush","muff","box","beaver","pelvis","pelvic","cupid","xxx","frontal","full frontal","complete nudity","desnudo integral","eve","adam and eve","body parts","bottom","rear","ass","arse","backside","culo","cul","bunda","booty","behind","back","fesses","sexy female","libidinous","libido","lust","lusty","lustful","risqué","slinky","spicy","spice","heat","steamy","suggestive","suggestion","suggest","titillating","titillate","voluptuous","curvy","curves","curve","alluring","anonymous","atmospheric","attractive","bare","beautiful","casual","caucasian","white woman","contemplative","dame","detail","dreaming","dream-like","dreamy","dreamlike","elegance","elegant","emotion","emotional","emotive","erotic","ethereal","euphoria","feminine","glamorous","glamourous","appealing","model","one woman","pale skin","passion","pensive","perfect","perfection","person","pleasure","pretty","seductive","sensual","sensuality","sexuality","stunning","style","styling","temptation","thoughtful","vogue","women","pinup","shapely","slender","slim","underwear","semi nude","film","analog","erotica","erotique","fine art","nue","desnudo","provocative","form","body","skin","desire","lingerie","young lady","eros","female form","shape","fraulein","mademoiselle","grainy","shadows","light","adult female","people","cinematic","sensualidad","sensualité","film photography","analog photo","nondigital","non digital","female body","dream","fantasy","voyeur","voyeuristic","cute","lovable","ambrosial","appeal","sex appeal","sexual","attract","attracting  attractive","captivating","charming","darling","dear","delectable","delicious","delightful     dishy","fetching","heavenly","hot","luscious","pleasing","precious","suave  amorous","loving","affectionate","aphrodisiac","boy crazy","girl crazy","have a crush on      horny","passionate","desirable","adorable","allure","entice","enticing","fascinating","salacious","smut","smutty","beckon","beckoning","bewitch","bewitching","captivate","forbidden","comely","enchant","enchanting","invite","inviting     looker","lovely","luring","magnetic","magnetism","mesmeric","pleasant","please","provoke","seduction","seduce","stun","tantalizing     teasing","tease","tempt","tempting","sexi","pornographic","parental advisory","for adults","star","inviting","modelling","top model","supermodel","provoking","racy","seducing","sensulaity","sensuous","arousing","arous","arousal","come-hither","flirt","flirty","flirtatious","kissable","sheet","draps","sabana","sheets","cotton","white","bedding","bedroom","cuarto","chambre","bed","bedtime","lit","cama","beds","young"],"colors":["#141a28","#1b2435","#242a3a","#e2ebf5","#375887","#dde4f3","#cfd6ee","#233c64","#2d364c","#5a72a5","#0c101b","#2f4a71","#3e6191","#4a5067","#1b2e4e"],"source":"upload","third_party":false,"wavebreak_id":null,"wavebreak_key":null,"licence_types":["standard"],"faces":false,"model_release":false,"license_reviewed_at":null,"plus":false,"standard":true,"editorial":false,"image_quality_judgment":null,"image_quality_judgment_required":null,"image_quality_prediction":1,"image_quality_prediction_updated_at":"2016-03-30T00:49:02.186Z"},"sort":[7294]},{"_index":"picfair-pic-development-picfair_development_201603_20160331-110500","_type":"pic","_id":"26202","_score":null,"_source":{"search_rank_score":0.89608475861786,"quality_ratio":0.98042379308928,"aspect_ratio":"landscape","formatted_tags":"afuera animal atlantic atlantic ocean cancun caribbean caribbean sea central america divers diving freediving giant gigantic gulf of mexico huge isla mujeres massive mesoamerican reef mexico quintana roo rhincodon rhincodon typus scuba diving snorkelers snorkeling snorkellers snorkelling swimmers swimming tropical tropics underwater whale shark yucatan rough guides","price":29.95,"trending_rank":8,"image_quality_prediction_factor":16,"user":{"id":1948,"name":"Simon Pierce","photo_url":"\/\/res.cloudinary.com\/fleetnation\/image\/upload\/c_fill,g_center,h_120,w_120\/v1409914843\/ra096tnw3zcpslskjuz6.jpg","picusername":"Simon Pierce"},"id":26202,"title":"Big mouth - whale shark and swimmer","authorised":true,"created_at":"2014-01-14T11:28:36.941Z","updated_at":"2016-03-29T21:26:57.694Z","height":3009,"model":"DMC-GX1","width":4007,"url":"big-mouth-whale-shark-and-swimmer","user_id":1948,"pic_views_count":6793,"caption":"A whale shark feeds on fish spawn among swimmers off the Mexican coast.","problem":false,"cloudinary_id":"v1389698919\/x7p8c3g5066kunmsw3fm.jpg","trending_count":8,"starred":true,"recently_starred":false,"top_rank":0,"tweeted":true,"trending_score":0.25964099490236,"picked":true,"stock":false,"tags_all":"Afuera, animal, Atlantic, atlantic ocean, Cancun, Caribbean, Caribbean sea, Central America, divers, diving, Freediving, giant, gigantic, Gulf of Mexico, huge, Isla Mujeres, Massive, Mesoamerican Reef, Mexico, Quintana Roo, Rhincodon, Rhincodon typus, scuba diving, snorkelers, snorkeling, snorkellers, snorkelling, swimmers, swimming, tropical, tropics, underwater, Whale Shark, yucatan, rough guides","deleted_at":null,"is_moderated":true,"starred_at":null,"starred_email":true,"post_pics_count":2,"problem_reason":"","md5":null,"iptc":false,"partner_link_id":null,"state":"complete","app_version":1,"slug":null,"tags":["afuera","animal","atlantic","atlantic ocean","cancun","caribbean","caribbean sea","central america","divers","diving","freediving","giant","gigantic","gulf of mexico","huge","isla mujeres","massive","mesoamerican reef","mexico","quintana roo","rhincodon","rhincodon typus","scuba diving","snorkelers","snorkeling","snorkellers","snorkelling","swimmers","swimming","tropical","tropics","underwater","whale shark","yucatan","rough guides"],"colors":["#0175bb","#015fa7","#01417a","#436681","#4d6e80","#033667","#83a5b5","#0b81c4","#131922","#acd3e1","#014d8d","#1e323d","#0767a5","#247cbc","#849aae"],"source":"upload","third_party":false,"wavebreak_id":null,"wavebreak_key":null,"licence_types":["standard"],"faces":false,"model_release":false,"license_reviewed_at":null,"plus":false,"standard":true,"editorial":false,"image_quality_judgment":null,"image_quality_judgment_required":null,"image_quality_prediction":4,"image_quality_prediction_updated_at":"2016-03-29T21:28:59.354Z"},"sort":[6793]},{"_index":"picfair-pic-development-picfair_development_201603_20160331-110500","_type":"pic","_id":"17568","_score":null,"_source":{"search_rank_score":0.87920536795048,"quality_ratio":0.89602683975242,"aspect_ratio":"landscape","formatted_tags":"office building business architecture modern glass urban city window exterior downtown work windows structure green air conditioner montevideo uruguay","price":6,"trending_rank":4,"image_quality_prediction_factor":16,"user":{"id":1555,"name":"Jess Kraft","photo_url":"\/\/res.cloudinary.com\/fleetnation\/image\/upload\/c_fill,g_center,h_120,w_120\/v1383694448\/u2uxkxwphrfdvexyv2ia.jpg","picusername":"Jess Kraft"},"id":17568,"title":"Details of an Old Office Building in Montevideo, Uruguay","authorised":true,"created_at":"2013-11-06T00:12:39.263Z","updated_at":"2016-03-28T13:21:50.585Z","height":2855,"model":"NIKON D90","width":4044,"url":"details-of-an-old-office-building","user_id":1555,"pic_views_count":6610,"caption":"Windows and air conditioning units on an old dilapidated office building in the center of Montevideo, Uruguay.","problem":false,"cloudinary_id":"v1383696761\/u8uahzgrmai55lfnf1ly.jpg","trending_count":4,"starred":true,"recently_starred":false,"top_rank":0,"tweeted":true,"trending_score":0.2842914534038,"picked":true,"stock":false,"tags_all":"office, building, business, architecture, modern, glass, urban, City, window, exterior, Downtown, work, windows, structure, green, air, conditioner, montevideo, uruguay","deleted_at":null,"is_moderated":true,"starred_at":null,"starred_email":true,"post_pics_count":3,"problem_reason":"","md5":null,"iptc":false,"partner_link_id":null,"state":"complete","app_version":1,"slug":null,"tags":["office","building","business","architecture","modern","glass","urban","city","window","exterior","downtown","work","windows","structure","green","air","conditioner","montevideo","uruguay"],"colors":["#122624","#387461","#a6a178","#6b6144","#71b399","#2d281a","#dfddc1","#080c12","#c0decb","#3bb2ad","#189093","#e8e6e7","#261913","#b36f21","#df9b3d"],"source":"upload","third_party":false,"wavebreak_id":null,"wavebreak_key":null,"licence_types":["standard"],"faces":false,"model_release":false,"license_reviewed_at":null,"plus":false,"standard":true,"editorial":false,"image_quality_judgment":null,"image_quality_judgment_required":null,"image_quality_prediction":4,"image_quality_prediction_updated_at":"2016-03-28T13:25:22.696Z"},"sort":[6610]},{"_index":"picfair-pic-development-picfair_development_201603_20160331-110500","_type":"pic","_id":"19557","_score":null,"_source":{"search_rank_score":0.89969783755538,"quality_ratio":0.99848918777692,"aspect_ratio":"portrait","formatted_tags":"nyc ariel taxi cab cityporn manhattan traffic midtown city city life tourist bigapple reflections dantv danmartland viral timessquare hail wet cabs yellowcabs","price":10,"trending_rank":6,"image_quality_prediction_factor":null,"user":{"id":1293,"name":"Dan Martland","photo_url":"\/\/res.cloudinary.com\/fleetnation\/image\/upload\/c_fill,g_center,h_120,w_120\/v1392822550\/z7tejqvs76gx2aritk4i.jpg","picusername":"Dan Martland"},"id":19557,"title":"High above NYC","authorised":true,"created_at":"2013-11-16T17:54:49.496Z","updated_at":"2016-03-29T21:26:58.079Z","height":4608,"model":null,"width":3456,"url":"high-above-nyc","user_id":1293,"pic_views_count":6543,"caption":"High above NYC","problem":false,"cloudinary_id":"v1384624490\/k6pfpwlpk4oh5q1gt3ja.jpg","trending_count":6,"starred":true,"recently_starred":false,"top_rank":0,"tweeted":true,"trending_score":0.25230928923806,"picked":true,"stock":false,"tags_all":"nyc, ariel, taxi, cab, CityPorn, manhattan, Traffic, midtown, City, city life, Tourist, bigApple, reflections, Dantv, DanMartland, Viral, TimesSquare, Hail, wet, cabs, YellowCabs","deleted_at":null,"is_moderated":true,"starred_at":null,"starred_email":true,"post_pics_count":4,"problem_reason":null,"md5":null,"iptc":false,"partner_link_id":null,"state":"complete","app_version":1,"slug":null,"tags":["nyc","ariel","taxi","cab","cityporn","manhattan","traffic","midtown","city","city life","tourist","bigapple","reflections","dantv","danmartland","viral","timessquare","hail","wet","cabs","yellowcabs"],"colors":["#05060a","#080505","#14171d","#2b2e35","#100e0a","#545861","#332e25","#161a1a","#a1a19a","#635945","#362a28","#555f60","#a0570c","#665351","#082c70"],"source":"upload","third_party":false,"wavebreak_id":null,"wavebreak_key":null,"licence_types":["standard"],"faces":false,"model_release":false,"license_reviewed_at":null,"plus":false,"standard":true,"editorial":false,"image_quality_judgment":4,"image_quality_judgment_required":null,"image_quality_prediction":null,"image_quality_prediction_updated_at":null},"sort":[6543]},{"_index":"picfair-pic-development-picfair_development_201603_20160331-110500","_type":"pic","_id":"33848","_score":null,"_source":{"search_rank_score":0.89140803042177,"quality_ratio":0.95704015210884,"aspect_ratio":"landscape","formatted_tags":"london landscape parliament bridge hp houses light thames cityscape tower big ben river south bank power government houses of parliament palace of westminster house of commons house of lords city aviation plane airplane aeroplane airliner transport sunlight sun beam sunbeam cloud boat float architecture","price":7,"trending_rank":7,"image_quality_prediction_factor":null,"user":{"id":1357,"name":"Tobias King","photo_url":"\/\/res.cloudinary.com\/fleetnation\/image\/upload\/c_fill,g_center,h_120,w_120\/v1380636734\/dtzkqxgvojufcj0cpate.jpg","picusername":"Tobias King"},"id":33848,"title":"Flying Visit","authorised":true,"created_at":"2014-02-24T20:22:33.833Z","updated_at":"2016-03-28T21:09:28.719Z","height":4752,"model":"NIKON D800","width":7120,"url":"flying-visit","user_id":1357,"pic_views_count":6034,"caption":"An airliner flies over an iconic part of London on a mainly sunny day","problem":false,"cloudinary_id":"v1393273357\/gpyy1fpiyghhkxglkcp9.jpg","trending_count":7,"starred":true,"recently_starred":false,"top_rank":0,"tweeted":true,"trending_score":0.35705975227705,"picked":true,"stock":false,"tags_all":"London, landscape, parliament, bridge, hp, houses, light, thames, cityscape, tower, Big Ben, River, south bank, power, government, houses of parliament, Palace of Westminster, House of Commons, house of lords, City, aviation, plane, airplane, aeroplane, airliner, transport, sunlight, sun, beam, sunbeam, cloud, boat, float, architecture","deleted_at":null,"is_moderated":true,"starred_at":null,"starred_email":true,"post_pics_count":2,"problem_reason":"","md5":null,"iptc":false,"partner_link_id":null,"state":"complete","app_version":1,"slug":null,"tags":["london","landscape","parliament","bridge","hp","houses","light","thames","cityscape","tower","big ben","river","south bank","power","government","houses of parliament","palace of westminster","house of commons","house of lords","city","aviation","plane","airplane","aeroplane","airliner","transport","sunlight","sun","beam","sunbeam","cloud","boat","float","architecture"],"colors":["#486383","#233040","#d9d2c4","#aea18b","#0e1721","#7898b7","#9eb2c5","#696257","#1e4066","#1d2323","#585251","#353030","#bfccd6","#302f2a","#4f5a5d"],"source":"upload","third_party":false,"wavebreak_id":null,"wavebreak_key":null,"licence_types":["standard"],"faces":false,"model_release":false,"license_reviewed_at":null,"plus":false,"standard":true,"editorial":false,"image_quality_judgment":4,"image_quality_judgment_required":null,"image_quality_prediction":null,"image_quality_prediction_updated_at":null},"sort":[6034]},{"_index":"picfair-pic-development-picfair_development_201603_20160331-110500","_type":"pic","_id":"20669","_score":null,"_source":{"search_rank_score":0.89537370191994,"quality_ratio":0.97686850959972,"aspect_ratio":"landscape","formatted_tags":"echo man angkor wat cambodia","price":10,"trending_rank":-2,"image_quality_prediction_factor":16,"user":{"id":1445,"name":"Iselin Shaw Of-Tordarroch","photo_url":"\/\/res.cloudinary.com\/fleetnation\/image\/upload\/c_fill,g_center,h_120,w_120\/v1411125664\/bw16shdsezlupxx0xeei.jpg","picusername":"Iselin Shaw Of-Tordarroch"},"id":20669,"title":"The Echo Man","authorised":true,"created_at":"2013-11-29T17:20:01.801Z","updated_at":"2016-03-29T21:26:57.245Z","height":1000,"model":"Canon EOS 60D","width":1500,"url":"the-echo-man","user_id":1445,"pic_views_count":6024,"caption":"A man who greeted me at Angkor Wat. He made a few pennies from tourists by showing them the echo chamber. He would thump his fist on your chest and stand back to let you listen to the echo of your own body's sound.","problem":false,"cloudinary_id":"v1385745603\/btwzysszoskw4n1ems5y.jpg","trending_count":4,"starred":true,"recently_starred":false,"top_rank":-6,"tweeted":true,"trending_score":0.32860962830562,"picked":true,"stock":false,"tags_all":"echo man, Angkor Wat, Cambodia","deleted_at":null,"is_moderated":true,"starred_at":null,"starred_email":true,"post_pics_count":3,"problem_reason":"","md5":null,"iptc":false,"partner_link_id":null,"state":"complete","app_version":1,"slug":null,"tags":["echo man","angkor wat","cambodia"],"colors":["#735655","#14110c","#40292d","#11090c","#b5918a","#362e23","#151f20","#645645","#1b1e23","#b49f7e","#e0d6b9","#e4cac7","#e4f1f4","#abb1c4","#495151"],"source":"upload","third_party":false,"wavebreak_id":null,"wavebreak_key":null,"licence_types":["standard"],"faces":false,"model_release":false,"license_reviewed_at":null,"plus":false,"standard":true,"editorial":false,"image_quality_judgment":null,"image_quality_judgment_required":null,"image_quality_prediction":4,"image_quality_prediction_updated_at":"2016-03-29T21:28:59.354Z"},"sort":[6024]},{"_index":"picfair-pic-development-picfair_development_201603_20160331-110500","_type":"pic","_id":"29546","_score":null,"_source":{"search_rank_score":0.8799198474824,"quality_ratio":0.89959923741201,"aspect_ratio":"landscape","formatted_tags":"vatican city rome italy sky","price":1,"trending_rank":5,"image_quality_prediction_factor":16,"user":{"id":2171,"name":"Neil Cherry","photo_url":"\/\/res.cloudinary.com\/fleetnation\/image\/upload\/c_fill,g_center,h_120,w_120\/v1390294788\/lpqdlc3pchlydhq5pad5.jpg","picusername":"Neil Cherry"},"id":29546,"title":"Vatican City, Rome","authorised":true,"created_at":"2014-02-04T12:53:09.488Z","updated_at":"2016-03-28T11:53:24.301Z","height":1933,"model":null,"width":2310,"url":"vatican-city-rome","user_id":2171,"pic_views_count":5989,"caption":"Vatican City, Rome in all its glory.","problem":false,"cloudinary_id":"v1391518390\/xg5aomwbrglizviemzqj.jpg","trending_count":5,"starred":true,"recently_starred":false,"top_rank":0,"tweeted":true,"trending_score":0.27607463390332,"picked":true,"stock":false,"tags_all":"Vatican, City, rome, italy, sky","deleted_at":null,"is_moderated":true,"starred_at":null,"starred_email":true,"post_pics_count":2,"problem_reason":"","md5":null,"iptc":false,"partner_link_id":null,"state":"complete","app_version":1,"slug":null,"tags":["vatican","city","rome","italy","sky"],"colors":["#624647","#412828","#1b0c0f","#806364","#7a5f48","#c1837c","#8c4c3e","#b89471","#ec8570","#5b220f","#0c0914","#ebb97b","#b34615","#352413","#59585f"],"source":"upload","third_party":false,"wavebreak_id":null,"wavebreak_key":null,"licence_types":["standard"],"faces":false,"model_release":false,"license_reviewed_at":null,"plus":false,"standard":true,"editorial":false,"image_quality_judgment":null,"image_quality_judgment_required":null,"image_quality_prediction":4,"image_quality_prediction_updated_at":"2016-03-28T11:55:25.595Z"},"sort":[5989]},{"_index":"picfair-pic-development-picfair_development_201603_20160331-110500","_type":"pic","_id":"11403","_score":null,"_source":{"search_rank_score":0.87917343538398,"quality_ratio":0.89586717691992,"aspect_ratio":"square","formatted_tags":"brighton brighton and hove west pier pier england city seafront uk cycling bike young free black and white monochrome rebel rules spring","price":7,"trending_rank":5,"image_quality_prediction_factor":16,"user":{"id":1284,"name":"Sarah Marie Leigh","photo_url":"\/\/res.cloudinary.com\/fleetnation\/image\/upload\/c_fill,g_center,h_120,w_120\/v1379232172\/yl6qils6cjpuylgoojyn.jpg","picusername":"Sarah Marie Leigh"},"id":11403,"title":"Rebel","authorised":true,"created_at":"2013-09-15T13:04:57.043Z","updated_at":"2016-03-29T22:44:21.980Z","height":1692,"model":null,"width":1692,"url":"rebel","user_id":1284,"pic_views_count":5753,"caption":"Brighton seafront on a cold spring day with the young and free cyclist in the no cycle zone. ","problem":false,"cloudinary_id":"v1379250299\/vaqwf0fkjxjtcr4hx0a9.jpg","trending_count":5,"starred":true,"recently_starred":false,"top_rank":0,"tweeted":true,"trending_score":0.21267234878902,"picked":true,"stock":false,"tags_all":"Brighton, Brighton and hove, West Pier, Pier, England, City, seafront, uk, cycling, bike, young, free, black and white, monochrome, rebel, rules, Spring","deleted_at":null,"is_moderated":true,"starred_at":null,"starred_email":true,"post_pics_count":3,"problem_reason":null,"md5":null,"iptc":false,"partner_link_id":null,"state":"complete","app_version":1,"slug":null,"tags":["brighton","brighton and hove","west pier","pier","england","city","seafront","uk","cycling","bike","young","free","black and white","monochrome","rebel","rules","spring"],"colors":["#f4f4f4","#e9e9e9","#585659","#69676a","#777578","#4c4a4d","#dcdcdc","#8a8a8a","#c9c9c9","#616164","#b1b1b1","#262628","#383639","#646c6e","#939394"],"source":"upload","third_party":false,"wavebreak_id":null,"wavebreak_key":null,"licence_types":["standard"],"faces":false,"model_release":false,"license_reviewed_at":null,"plus":false,"standard":true,"editorial":false,"image_quality_judgment":null,"image_quality_judgment_required":null,"image_quality_prediction":4,"image_quality_prediction_updated_at":"2016-03-29T22:48:58.929Z"},"sort":[5753]},{"_index":"picfair-pic-development-picfair_development_201603_20160331-110500","_type":"pic","_id":"6731","_score":null,"_source":{"search_rank_score":0.89585732650242,"quality_ratio":0.97928663251208,"aspect_ratio":"landscape","formatted_tags":"architecture shanghai china asia lobby view looking down yellow orange balconies balcony interior floors hotel grand hyatt pudong jin mao tower 金茂大厦","price":10,"trending_rank":6,"image_quality_prediction_factor":16,"user":{"id":1036,"name":"Chris Petersen-Clausen","photo_url":"\/\/res.cloudinary.com\/fleetnation\/image\/upload\/c_fill,g_center,h_120,w_120\/v1419346109\/gfwjkjxkmvat2svd61lu.jpg","picusername":"Chris Petersen-Clausen"},"id":6731,"title":"86 floors down","authorised":true,"created_at":"2013-08-12T12:23:57.108Z","updated_at":"2016-03-29T21:26:58.884Z","height":3840,"model":"Canon EOS 5D Mark III","width":5760,"url":"86-floors-down","user_id":1036,"pic_views_count":5752,"caption":"View from the 86th floor of the Grand Hyatt Hotel inside the Jin Mao Tower in Pudong, Shanghai, China. ","problem":false,"cloudinary_id":"v1376310239\/vs56asqu6t6dx96zbgby.jpg","trending_count":6,"starred":true,"recently_starred":false,"top_rank":0,"tweeted":true,"trending_score":0.18637517195724,"picked":true,"stock":false,"tags_all":"architecture, shanghai, china, asia, lobby, View, looking down, yellow, orange, balconies, balcony, interior, floors, hotel, grand hyatt, pudong, Jin Mao Tower, 金茂大厦","deleted_at":null,"is_moderated":true,"starred_at":null,"starred_email":true,"post_pics_count":3,"problem_reason":null,"md5":null,"iptc":false,"partner_link_id":null,"state":"complete","app_version":1,"slug":null,"tags":["architecture","shanghai","china","asia","lobby","view","looking down","yellow","orange","balconies","balcony","interior","floors","hotel","grand hyatt","pudong","jin mao tower","金茂大厦"],"colors":["#cc8708","#c29c53","#7f4607","#b16806","#5d1d04","#e0cfb7","#eee0be","#9b681a","#330d05","#dba210","#5d2c03","#984903","#8a3d1b","#dce2e0","#f7d628"],"source":"upload","third_party":false,"wavebreak_id":null,"wavebreak_key":null,"licence_types":["standard"],"faces":false,"model_release":false,"license_reviewed_at":null,"plus":false,"standard":true,"editorial":false,"image_quality_judgment":null,"image_quality_judgment_required":null,"image_quality_prediction":4,"image_quality_prediction_updated_at":"2016-03-29T21:28:59.354Z"},"sort":[5752]},{"_index":"picfair-pic-development-picfair_development_201603_20160331-110500","_type":"pic","_id":"12082","_score":null,"_source":{"search_rank_score":0.89161436127957,"quality_ratio":0.95807180639786,"aspect_ratio":"landscape","formatted_tags":"turkie tyrkia ballon hot air flying flight","price":3,"trending_rank":6,"image_quality_prediction_factor":16,"user":{"id":1305,"name":"Ernst Furuhatt","photo_url":"\/\/res.cloudinary.com\/fleetnation\/image\/upload\/c_fill,g_center,h_120,w_120\/v1379503570\/kslskqdfm5v098elzi0n.jpg","picusername":"Ernst Furuhatt"},"id":12082,"title":"ballons","authorised":true,"created_at":"2013-09-18T11:29:41.738Z","updated_at":"2016-03-29T21:26:58.706Z","height":946,"model":"NIKON D800E","width":1417,"url":"ballons","user_id":1305,"pic_views_count":5686,"caption":"Flying hot air ballons in Cappadocya","problem":false,"cloudinary_id":"v1379503782\/k8lobicofr5evmbggkmq.jpg","trending_count":6,"starred":true,"recently_starred":false,"top_rank":0,"tweeted":true,"trending_score":0.37648679188099,"picked":true,"stock":false,"tags_all":"Turkie, Tyrkia, ballon, hot air, flying, flight","deleted_at":null,"is_moderated":true,"starred_at":null,"starred_email":true,"post_pics_count":3,"problem_reason":"","md5":null,"iptc":false,"partner_link_id":null,"state":"complete","app_version":1,"slug":null,"tags":["turkie","tyrkia","ballon","hot air","flying","flight"],"colors":["#323020","#554e3b","#e3e1d7","#a0b3c4","#18180e","#786d53","#c7d0d1","#7f99b2","#a99977","#272d2c","#c5cdd4","#a7b9c2","#4b5555","#424e5b","#e7e9e8"],"source":"upload","third_party":false,"wavebreak_id":null,"wavebreak_key":null,"licence_types":["standard"],"faces":false,"model_release":false,"license_reviewed_at":null,"plus":false,"standard":true,"editorial":false,"image_quality_judgment":null,"image_quality_judgment_required":null,"image_quality_prediction":4,"image_quality_prediction_updated_at":"2016-03-29T21:28:59.354Z"},"sort":[5686]},{"_index":"picfair-pic-development-picfair_development_201603_20160331-110500","_type":"pic","_id":"31814","_score":null,"_source":{"search_rank_score":0.87756285536234,"quality_ratio":0.8878142768117,"aspect_ratio":"landscape","formatted_tags":"tilt and shift nyc new york downtown traffic jam traffic congestion traffic snarl-up manhattan","price":3,"trending_rank":8,"image_quality_prediction_factor":16,"user":{"id":1253,"name":"John Metcalfe","photo_url":"\/\/res.cloudinary.com\/fleetnation\/image\/upload\/c_fill,g_center,h_120,w_120\/v1381259654\/oi4ra7octcpggoioyhgu.jpg","picusername":"John Metcalfe"},"id":31814,"title":"Downtown New York","authorised":true,"created_at":"2014-02-16T12:34:17.048Z","updated_at":"2016-03-29T21:27:00.836Z","height":2736,"model":"Canon PowerShot G12","width":3648,"url":"downtown-new-york","user_id":1253,"pic_views_count":5627,"caption":"Downtown New York","problem":false,"cloudinary_id":"v1392554058\/e8zrt8rpv27lb4su1r82.jpg","trending_count":8,"starred":true,"recently_starred":false,"top_rank":0,"tweeted":true,"trending_score":0.32860962830562,"picked":true,"stock":false,"tags_all":"tilt and shift,nyc,new york,Downtown,traffic jam,traffic congestion,traffic snarl-up,manhattan","deleted_at":null,"is_moderated":true,"starred_at":null,"starred_email":true,"post_pics_count":2,"problem_reason":null,"md5":null,"iptc":false,"partner_link_id":null,"state":"complete","app_version":1,"slug":null,"tags":["tilt and shift","nyc","new york","downtown","traffic jam","traffic congestion","traffic snarl-up","manhattan"],"colors":["#b79c6f","#736734","#3e2824","#4d5a6e","#262e3c","#674f49","#ecd7b1","#e6981a","#1e2d2b","#90a2b8","#40585a","#764814","#d03922","#9db8b2","#c39d8d"],"source":"upload","third_party":false,"wavebreak_id":null,"wavebreak_key":null,"licence_types":["standard"],"faces":false,"model_release":false,"license_reviewed_at":null,"plus":false,"standard":true,"editorial":false,"image_quality_judgment":null,"image_quality_judgment_required":null,"image_quality_prediction":4,"image_quality_prediction_updated_at":"2016-03-29T21:28:59.354Z"},"sort":[5627]},{"_index":"picfair-pic-development-picfair_development_201603_20160331-110500","_type":"pic","_id":"29747","_score":null,"_source":{"search_rank_score":0.85629815561608,"quality_ratio":0.78149077808041,"aspect_ratio":"landscape","formatted_tags":"women maya guatemala","price":3,"trending_rank":4,"image_quality_prediction_factor":16,"user":{"id":2247,"name":"Diego A.","photo_url":"\/\/res.cloudinary.com\/fleetnation\/image\/upload\/c_fill,g_center,h_120,w_120\/v1391033384\/rgxvusgxhzniw8l5aiub.jpg","picusername":"Diego A"},"id":29747,"title":"Comadres","authorised":true,"created_at":"2014-02-04T21:36:52.477Z","updated_at":"2016-03-29T21:27:00.881Z","height":1728,"model":"Canon EOS 60D","width":2592,"url":"comadres","user_id":2247,"pic_views_count":5600,"caption":"San Andres Xecul, in western Guatemala","problem":false,"cloudinary_id":"v1391549813\/fnlcb79qkk7ykmentih1.jpg","trending_count":4,"starred":true,"recently_starred":false,"top_rank":0,"tweeted":true,"trending_score":0.22910598778998,"picked":true,"stock":false,"tags_all":"women, maya, guatemala","deleted_at":null,"is_moderated":true,"starred_at":null,"starred_email":true,"post_pics_count":2,"problem_reason":null,"md5":null,"iptc":false,"partner_link_id":null,"state":"complete","app_version":1,"slug":null,"tags":["women","maya","guatemala"],"colors":["#ece9dc","#d7d3c4","#b3b0a3","#919187","#26282d","#0f1015","#f4f2e6","#34373b","#4d5150","#72736d","#696c6a","#2f3335","#4a4c4f","#535450","#30312e"],"source":"upload","third_party":false,"wavebreak_id":null,"wavebreak_key":null,"licence_types":["standard"],"faces":false,"model_release":false,"license_reviewed_at":null,"plus":false,"standard":true,"editorial":false,"image_quality_judgment":null,"image_quality_judgment_required":null,"image_quality_prediction":4,"image_quality_prediction_updated_at":"2016-03-29T21:28:59.354Z"},"sort":[5600]},{"_index":"picfair-pic-development-picfair_development_201603_20160331-110500","_type":"pic","_id":"6238","_score":null,"_source":{"search_rank_score":0.8649144642996,"quality_ratio":0.82457232149801,"aspect_ratio":"landscape","formatted_tags":"ocean surfer black and white wave happy life surfing nei toledo","price":3,"trending_rank":4,"image_quality_prediction_factor":16,"user":{"id":787,"name":"Nei Toledo","photo_url":"\/\/graph.facebook.com\/1534513912\/picture?type=square","picusername":"Nei Toledo"},"id":6238,"title":"surfer","authorised":true,"created_at":"2013-08-08T17:12:33.608Z","updated_at":"2016-03-28T10:57:44.092Z","height":2592,"model":"Canon EOS 40D","width":3888,"url":"surfer","user_id":787,"pic_views_count":5543,"caption":"surfer","problem":false,"cloudinary_id":"v1375981954\/liykwz1bva9seotglsju.jpg","trending_count":4,"starred":true,"recently_starred":false,"top_rank":0,"tweeted":true,"trending_score":0.35705975227705,"picked":true,"stock":false,"tags_all":"ocean, surfer, black and white, wave, happy, life, surfing, nei toledo","deleted_at":null,"is_moderated":true,"starred_at":null,"starred_email":true,"post_pics_count":4,"problem_reason":null,"md5":null,"iptc":false,"partner_link_id":null,"state":"complete","app_version":1,"slug":null,"tags":["ocean","surfer","black and white","wave","happy","life","surfing","nei toledo"],"colors":["#b7b7b7","#c8c8c8","#a8a8a8","#d7d7d7","#989898","#303030","#888888","#787878","#e7e7e7","#686868","#100f10","#585858","#484848","#f6f6f6","#858a8a"],"source":"upload","third_party":false,"wavebreak_id":null,"wavebreak_key":null,"licence_types":["standard"],"faces":false,"model_release":false,"license_reviewed_at":null,"plus":false,"standard":true,"editorial":false,"image_quality_judgment":null,"image_quality_judgment_required":null,"image_quality_prediction":4,"image_quality_prediction_updated_at":"2016-03-28T11:00:20.255Z"},"sort":[5543]},{"_index":"picfair-pic-development-picfair_development_201603_20160331-110500","_type":"pic","_id":"20651","_score":null,"_source":{"search_rank_score":0.86606718546638,"quality_ratio":0.83033592733192,"aspect_ratio":"square","formatted_tags":"turkey istanbul fish rod bosphorus water asia europe eurasia iphone 4s instagram","price":2,"trending_rank":4,"image_quality_prediction_factor":16,"user":{"id":1704,"name":"Colby Pan","photo_url":"\/\/graph.facebook.com\/1372695365\/picture?type=square","picusername":"Colby Pan"},"id":20651,"title":"Fishing on the Bosphorus","authorised":true,"created_at":"2013-11-29T16:20:23.860Z","updated_at":"2016-03-29T21:26:58.229Z","height":1920,"model":null,"width":1920,"url":"fishing-on-the-bosphorus","user_id":1704,"pic_views_count":5457,"caption":"Man fishing in the Sea of Marmara in Istanbul","problem":false,"cloudinary_id":"v1385742024\/azreqvpexa6kayzehyk5.jpg","trending_count":4,"starred":true,"recently_starred":false,"top_rank":0,"tweeted":true,"trending_score":0.31217598930466,"picked":true,"stock":false,"tags_all":"turkey, istanbul, Fish, rod, Bosphorus, water, asia, Europe, Eurasia, iPhone 4S, Instagram","deleted_at":null,"is_moderated":true,"starred_at":null,"starred_email":true,"post_pics_count":3,"problem_reason":"","md5":null,"iptc":false,"partner_link_id":null,"state":"complete","app_version":1,"slug":null,"tags":["turkey","istanbul","fish","rod","bosphorus","water","asia","europe","eurasia","iphone 4s","instagram"],"colors":["#040948","#1c85b1","#9dbcbe","#1172a3","#6aa5bc","#b9d0c9","#e1d4c1","#485e7b","#287091","#b19491","#3b9fbe","#18669f","#0a4a71","#b6b1a6","#856a7c"],"source":"upload","third_party":false,"wavebreak_id":null,"wavebreak_key":null,"licence_types":["standard"],"faces":false,"model_release":false,"license_reviewed_at":null,"plus":false,"standard":true,"editorial":false,"image_quality_judgment":null,"image_quality_judgment_required":null,"image_quality_prediction":4,"image_quality_prediction_updated_at":"2016-03-29T21:28:59.354Z"},"sort":[5457]},{"_index":"picfair-pic-development-picfair_development_201603_20160331-110500","_type":"pic","_id":"6112","_score":null,"_source":{"search_rank_score":0.87768016393314,"quality_ratio":0.88840081966571,"aspect_ratio":"landscape","formatted_tags":"clouds sky airplane aeroplane beautiful sunset","price":7.5,"trending_rank":5,"image_quality_prediction_factor":16,"user":{"id":618,"name":"Warren Showalter","photo_url":"\/\/res.cloudinary.com\/fleetnation\/image\/upload\/c_fill,g_center,h_120,w_120\/v1375894012\/obsd12yakqo4p98bu9pj.jpg","picusername":"Warren Showalter"},"id":6112,"title":"Above the clouds","authorised":true,"created_at":"2013-08-08T02:33:19.166Z","updated_at":"2016-03-30T00:41:23.002Z","height":2848,"model":"NIKON D90","width":4288,"url":"above-the-clouds","user_id":618,"pic_views_count":4962,"caption":"Sunset at 35,000 feet","problem":false,"cloudinary_id":"v1375929200\/izb9pnl1o3hfn7x5dwgy.jpg","trending_count":5,"starred":true,"recently_starred":false,"top_rank":0,"tweeted":true,"trending_score":0.16721071017458,"picked":true,"stock":false,"tags_all":"clouds, sky, airplane, aeroplane, beautiful, sunset","deleted_at":null,"is_moderated":true,"starred_at":null,"starred_email":true,"post_pics_count":3,"problem_reason":null,"md5":null,"iptc":false,"partner_link_id":null,"state":"complete","app_version":1,"slug":null,"tags":["clouds","sky","airplane","aeroplane","beautiful","sunset"],"colors":["#050a1c","#644141","#0f1529","#8f5648","#432a36","#081833","#b68065","#26263a","#cc9c66","#241722","#dde7e0","#c4583b","#d6c381","#d97245","#414551"],"source":"upload","third_party":false,"wavebreak_id":null,"wavebreak_key":null,"licence_types":["standard"],"faces":false,"model_release":false,"license_reviewed_at":null,"plus":false,"standard":true,"editorial":false,"image_quality_judgment":null,"image_quality_judgment_required":null,"image_quality_prediction":4,"image_quality_prediction_updated_at":"2016-03-30T00:43:58.102Z"},"sort":[4962]},{"_index":"picfair-pic-development-picfair_development_201603_20160331-110500","_type":"pic","_id":"15600","_score":null,"_source":{"search_rank_score":0.87658816316595,"quality_ratio":0.88294081582974,"aspect_ratio":"landscape","formatted_tags":"haiti cap haitien people water","price":1,"trending_rank":5,"image_quality_prediction_factor":16,"user":{"id":1471,"name":"CallanMurrayHocking","photo_url":"\/\/res.cloudinary.com\/fleetnation\/image\/upload\/c_fill,g_center,h_120,w_120\/v1382628230\/llpdn9oynegwi8tmymaz.jpg","picusername":"CallanMurrayHocking"},"id":15600,"title":"All for One- Haiti","authorised":true,"created_at":"2013-10-25T09:26:02.289Z","updated_at":"2016-03-28T11:56:36.303Z","height":1000,"model":"NIKON D40","width":1504,"url":"all-for-one-haiti","user_id":1471,"pic_views_count":4913,"caption":"Cap Haitien to Port au Prince","problem":false,"cloudinary_id":"v1382693163\/cjfzqq6pcfgc1okqld7k.jpg","trending_count":5,"starred":true,"recently_starred":false,"top_rank":0,"tweeted":true,"trending_score":0.30452475787475,"picked":true,"stock":false,"tags_all":"Haiti, Cap Haitien, people, water","deleted_at":null,"is_moderated":true,"starred_at":null,"starred_email":true,"post_pics_count":3,"problem_reason":null,"md5":null,"iptc":false,"partner_link_id":null,"state":"complete","app_version":1,"slug":null,"tags":["haiti","cap haitien","people","water"],"colors":["#989898","#888888","#a6a6a6","#777777","#d7d7d7","#303030","#686868","#c9c9c9","#585858","#484848","#131313","#b7b7b7","#99a0a0","#e8e8e8","#939393"],"source":"upload","third_party":false,"wavebreak_id":null,"wavebreak_key":null,"licence_types":["standard"],"faces":false,"model_release":false,"license_reviewed_at":null,"plus":false,"standard":true,"editorial":false,"image_quality_judgment":null,"image_quality_judgment_required":null,"image_quality_prediction":4,"image_quality_prediction_updated_at":"2016-03-28T12:00:21.961Z"},"sort":[4913]},{"_index":"picfair-pic-development-picfair_development_201603_20160331-110500","_type":"pic","_id":"17736","_score":null,"_source":{"search_rank_score":0.8891226483997,"quality_ratio":0.94561324199849,"aspect_ratio":"landscape","formatted_tags":"barbary macaque gibralter ape monkey animal","price":5,"trending_rank":4,"image_quality_prediction_factor":16,"user":{"id":1280,"name":"Jrsisson","photo_url":"\/\/res.cloudinary.com\/fleetnation\/image\/upload\/c_fill,g_center,h_120,w_120\/v1444638082\/y3e78odzbrez8gfwwgdy.jpg","picusername":"Jrsisson"},"id":17736,"title":"Captive","authorised":true,"created_at":"2013-11-06T19:01:33.264Z","updated_at":"2016-03-29T21:26:56.456Z","height":2576,"model":"E-PL1","width":3712,"url":"captive","user_id":1280,"pic_views_count":4884,"caption":"A Barbary macaque in Gibraltar","problem":false,"cloudinary_id":"v1383764495\/hxvvxu05hvfral23ic9i.jpg","trending_count":4,"starred":true,"recently_starred":false,"top_rank":0,"tweeted":true,"trending_score":0.25230928923806,"picked":true,"stock":false,"tags_all":"barbary, macaque, gibralter, ape, Monkey, animal","deleted_at":null,"is_moderated":true,"starred_at":null,"starred_email":true,"post_pics_count":3,"problem_reason":null,"md5":null,"iptc":false,"partner_link_id":null,"state":"complete","app_version":1,"slug":null,"tags":["barbary","macaque","gibralter","ape","monkey","animal"],"colors":["#13120a","#312f19","#1c2921","#ded6c9","#49635f","#b79e7f","#6c5b39","#8f9dad","#4d637d","#9cb5b8","#b39f98","#b05e16","#5b2f09","#d28032","#171f29"],"source":"upload","third_party":false,"wavebreak_id":null,"wavebreak_key":null,"licence_types":["standard"],"faces":false,"model_release":false,"license_reviewed_at":null,"plus":false,"standard":true,"editorial":false,"image_quality_judgment":null,"image_quality_judgment_required":null,"image_quality_prediction":4,"image_quality_prediction_updated_at":"2016-03-29T21:28:59.354Z"},"sort":[4884]},{"_index":"picfair-pic-development-picfair_development_201603_20160331-110500","_type":"pic","_id":"26193","_score":null,"_source":{"search_rank_score":0.89608475861786,"quality_ratio":0.98042379308928,"aspect_ratio":"portrait","formatted_tags":"afuera animal atlantic atlantic ocean cancun caribbean caribbean sea central america divers diving freediving giant gigantic gulf of mexico huge isla mujeres massive mesoamerican reef mexico quintana roo rhincodon rhincodon typus scuba diving snorkelers snorkeling snorkellers snorkelling swimmers swimming tropical tropics underwater whale shark yucatan rough guides","price":29.95,"trending_rank":9,"image_quality_prediction_factor":16,"user":{"id":1948,"name":"Simon Pierce","photo_url":"\/\/res.cloudinary.com\/fleetnation\/image\/upload\/c_fill,g_center,h_120,w_120\/v1409914843\/ra096tnw3zcpslskjuz6.jpg","picusername":"Simon Pierce"},"id":26193,"title":"Whale shark - extreme suction","authorised":true,"created_at":"2014-01-14T10:52:55.641Z","updated_at":"2016-03-29T23:00:32.818Z","height":3335,"model":"DMC-GX1","width":2504,"url":"whale-shark-extreme-suction","user_id":1948,"pic_views_count":4615,"caption":"Vertical shot of a whale shark suction-feeding on tuna spawn off Isla Mujeres, near Cancun in Mexico.","problem":false,"cloudinary_id":"v1389696778\/f4thef9b4dygtkdxwdfo.jpg","trending_count":9,"starred":true,"recently_starred":false,"top_rank":0,"tweeted":true,"trending_score":0.18464425202599,"picked":true,"stock":false,"tags_all":"Afuera, animal, Atlantic, atlantic ocean, Cancun, Caribbean, Caribbean sea, Central America, divers, diving, Freediving, giant, gigantic, Gulf of Mexico, huge, Isla Mujeres, Massive, Mesoamerican Reef, Mexico, Quintana Roo, Rhincodon, Rhincodon typus, scuba diving, snorkelers, snorkeling, snorkellers, snorkelling, swimmers, swimming, tropical, tropics, underwater, Whale Shark, yucatan, rough guides","deleted_at":null,"is_moderated":true,"starred_at":null,"starred_email":true,"post_pics_count":2,"problem_reason":null,"md5":null,"iptc":false,"partner_link_id":null,"state":"complete","app_version":1,"slug":null,"tags":["afuera","animal","atlantic","atlantic ocean","cancun","caribbean","caribbean sea","central america","divers","diving","freediving","giant","gigantic","gulf of mexico","huge","isla mujeres","massive","mesoamerican reef","mexico","quintana roo","rhincodon","rhincodon typus","scuba diving","snorkelers","snorkeling","snorkellers","snorkelling","swimmers","swimming","tropical","tropics","underwater","whale shark","yucatan","rough guides"],"colors":["#185a82","#04486f","#285b81","#043b5c","#233442","#445260","#8390a0","#637282","#467397","#a0acbc","#cfd4dd","#4a6575","#1d303b","#0d314b","#b1aeab"],"source":"upload","third_party":false,"wavebreak_id":null,"wavebreak_key":null,"licence_types":["standard"],"faces":false,"model_release":false,"license_reviewed_at":null,"plus":false,"standard":true,"editorial":false,"image_quality_judgment":null,"image_quality_judgment_required":null,"image_quality_prediction":4,"image_quality_prediction_updated_at":"2016-03-29T23:03:59.242Z"},"sort":[4615]},{"_index":"picfair-pic-development-picfair_development_201603_20160331-110500","_type":"pic","_id":"41927","_score":null,"_source":{"search_rank_score":0.8906262735582,"quality_ratio":0.95313136779098,"aspect_ratio":"landscape","formatted_tags":"travel asia india rajasthan jodhpur street kids joyful b&w black & white","price":25,"trending_rank":8,"image_quality_prediction_factor":16,"user":{"id":2850,"name":"Wilfred Seefeld","photo_url":"\/\/res.cloudinary.com\/fleetnation\/image\/upload\/c_fill,g_center,h_120,w_120\/v1395807021\/ziywtujneem4krqkh9mk.jpg","picusername":"Wilfred Seefeld"},"id":41927,"title":"PURE JOY","authorised":true,"created_at":"2014-04-27T05:00:11.090Z","updated_at":"2016-03-29T22:13:24.118Z","height":2929,"model":"NIKON D7000","width":3875,"url":"pure-joy","user_id":2850,"pic_views_count":4463,"caption":"Portrait of a group of joyful street kids from Jodhpur, Rajasthan","problem":false,"cloudinary_id":"v1398574812\/omsux5jojtv3cwngsrxd.jpg","trending_count":8,"starred":true,"recently_starred":false,"top_rank":0,"tweeted":true,"trending_score":0.27072970957749,"picked":true,"stock":false,"tags_all":"travel, asia, india, rajasthan, Jodhpur, street kids, joyful, b&w, black & white","deleted_at":null,"is_moderated":true,"starred_at":null,"starred_email":true,"post_pics_count":2,"problem_reason":"","md5":null,"iptc":false,"partner_link_id":null,"state":"complete","app_version":1,"slug":null,"tags":["travel","asia","india","rajasthan","jodhpur","street kids","joyful","b&w","black & white"],"colors":["#b8b8b8","#c7c7c7","#a8a8a8","#d7d7d7","#989898","#030303","#888888","#505050","#2f2f2f","#686868","#787878","#eaeaea","#181818","#c8cfcf","#adb4b4"],"source":"upload","third_party":false,"wavebreak_id":null,"wavebreak_key":null,"licence_types":["standard"],"faces":false,"model_release":false,"license_reviewed_at":null,"plus":false,"standard":true,"editorial":false,"image_quality_judgment":null,"image_quality_judgment_required":null,"image_quality_prediction":4,"image_quality_prediction_updated_at":"2016-03-29T22:13:56.833Z"},"sort":[4463]},{"_index":"picfair-pic-development-picfair_development_201603_20160331-110500","_type":"pic","_id":"75398","_score":null,"_source":{"search_rank_score":0.9803640521245,"quality_ratio":0.90182026062248,"aspect_ratio":"landscape","formatted_tags":"rough guides backlit by beautiful golden light dripping water flowing water fluke golden hour humpback humpback whale nobody sea life smooth calm water sounding sunset tail tail fluke whale tail whales wildlife","price":20,"trending_rank":1,"image_quality_prediction_factor":16,"user":{"id":5302,"name":"David Hoffmann","photo_url":"\/\/res.cloudinary.com\/fleetnation\/image\/upload\/c_fill,g_center,h_120,w_120\/v1406937601\/bej8z6la8h9joufgtpiq.jpg","picusername":"David Hoffmann"},"id":75398,"title":"Humpback whale tail with flowing water backlit by beautiful gold","authorised":true,"created_at":"2014-08-01T21:19:11.796Z","updated_at":"2016-03-29T13:13:43.841Z","height":1931,"model":null,"width":2921,"url":"humpback-whale-tail-with-flowing-water-backlit-by-beautiful-gold","user_id":5302,"pic_views_count":4385,"caption":"Humpback whale tail with flowing water backlit by beautiful golden light surrounded by smooth calm water. (Megaptera novaeangliae), Alaska, Southeast Alaska, near Frederick Sound","problem":false,"cloudinary_id":"v1406927940\/ubqejmiks0rjopgqjsk1.jpg","trending_count":1,"starred":true,"recently_starred":true,"top_rank":0,"tweeted":true,"trending_score":null,"picked":true,"stock":true,"tags_all":"Rough Guides, backlit by beautiful golden light, dripping water, flowing water, fluke, golden hour, humpback, humpback whale, nobody, sea life, smooth calm water, sounding, sunset, tail, tail fluke, whale tail, whales, wildlife","deleted_at":null,"is_moderated":true,"starred_at":"2014-08-02T18:13:27.308Z","starred_email":true,"post_pics_count":1,"problem_reason":"","md5":null,"iptc":false,"partner_link_id":null,"state":"complete","app_version":1,"slug":null,"tags":["rough guides","backlit by beautiful golden light","dripping water","flowing water","fluke","golden hour","humpback","humpback whale","nobody","sea life","smooth calm water","sounding","sunset","tail","tail fluke","whale tail","whales","wildlife"],"colors":["#322a31","#24181e","#393142","#0a0507","#ce924f","#f4e29a","#584338","#ad764b","#8a5635","#5b2b19","#714b34","#b38d65","#deaa5c","#956b4d","#f6d360"],"source":"upload","third_party":false,"wavebreak_id":null,"wavebreak_key":null,"licence_types":["standard"],"faces":false,"model_release":false,"license_reviewed_at":null,"plus":false,"standard":true,"editorial":false,"image_quality_judgment":null,"image_quality_judgment_required":null,"image_quality_prediction":4,"image_quality_prediction_updated_at":"2016-03-29T13:14:02.278Z"},"sort":[4385]},{"_index":"picfair-pic-development-picfair_development_201603_20160331-110500","_type":"pic","_id":"20291","_score":null,"_source":{"search_rank_score":0.85900486314793,"quality_ratio":0.79502431573966,"aspect_ratio":"landscape","formatted_tags":"dynamo dresden football ultras","price":19,"trending_rank":4,"image_quality_prediction_factor":16,"user":{"id":1683,"name":"Danny Last","photo_url":"\/\/res.cloudinary.com\/fleetnation\/image\/upload\/c_fill,g_center,h_120,w_120\/v1404034794\/zeh1wjeabbea5ihkd2ip.jpg","picusername":"Danny Last"},"id":20291,"title":"Dy-na-mo!","authorised":true,"created_at":"2013-11-24T12:50:40.712Z","updated_at":"2016-03-28T19:10:09.594Z","height":1042,"model":"Canon DIGITAL IXUS 990 IS","width":1390,"url":"dy-na-mo","user_id":1683,"pic_views_count":4319,"caption":"Arms aloft at Dynamo Dresden.","problem":false,"cloudinary_id":"v1385297441\/nirugtnxw98evlrithsa.jpg","trending_count":4,"starred":true,"recently_starred":false,"top_rank":0,"tweeted":true,"trending_score":0.10865445957495,"picked":true,"stock":false,"tags_all":"Dynamo Dresden, football, ultras","deleted_at":null,"is_moderated":true,"starred_at":null,"starred_email":true,"post_pics_count":2,"problem_reason":"","md5":null,"iptc":false,"partner_link_id":null,"state":"complete","app_version":1,"slug":null,"tags":["dynamo dresden","football","ultras"],"colors":["#eed7ab","#bf9e6d","#784c3b","#9c6048","#795e3d","#30271b","#bb8066","#41271e","#c79b87","#e9cdc1","#dcac1b","#b0640c","#c3c5ce","#778784","#bb4a34"],"source":"upload","third_party":false,"wavebreak_id":null,"wavebreak_key":null,"licence_types":["standard"],"faces":false,"model_release":false,"license_reviewed_at":null,"plus":false,"standard":true,"editorial":false,"image_quality_judgment":null,"image_quality_judgment_required":null,"image_quality_prediction":4,"image_quality_prediction_updated_at":"2016-03-28T19:10:22.400Z"},"sort":[4319]},{"_index":"picfair-pic-development-picfair_development_201603_20160331-110500","_type":"pic","_id":"29734","_score":null,"_source":{"search_rank_score":0.89595228281365,"quality_ratio":0.97976141406823,"aspect_ratio":"landscape","formatted_tags":"surf surfing surfer surfers ocean rgwater wave waves girl water sea sunset sun sport sports action beach","price":25,"trending_rank":4,"image_quality_prediction_factor":16,"user":{"id":1144,"name":"Tim Jones","photo_url":"\/\/res.cloudinary.com\/fleetnation\/image\/upload\/c_fill,g_center,h_120,w_120\/v1377198869\/zeeoatf9g5afoqswdms5.jpg","picusername":"Tim Jones"},"id":29734,"title":"Surfer Girl","authorised":true,"created_at":"2014-02-04T20:56:18.334Z","updated_at":"2016-03-28T18:30:32.828Z","height":3456,"model":"Canon EOS 7D","width":5184,"url":"surfer-girl","user_id":1144,"pic_views_count":4153,"caption":"She waits for the next set in the glow of the evening water","problem":false,"cloudinary_id":"v1391547380\/ounsyqb4dulkupt7u8da.jpg","trending_count":4,"starred":true,"recently_starred":false,"top_rank":0,"tweeted":true,"trending_score":0.11862125903744,"picked":true,"stock":false,"tags_all":"surf, surfing, surfer, surfers, ocean, RGwater, wave, waves, girl, water, sea, sunset, sun, sport, Sports, action, beach","deleted_at":null,"is_moderated":true,"starred_at":null,"starred_email":true,"post_pics_count":1,"problem_reason":null,"md5":null,"iptc":false,"partner_link_id":null,"state":"complete","app_version":1,"slug":null,"tags":["surf","surfing","surfer","surfers","ocean","rgwater","wave","waves","girl","water","sea","sunset","sun","sport","sports","action","beach"],"colors":["#9c6739","#ba8248","#d07827","#634534","#462c22","#e57f12","#86674b","#7d4c27","#6d4d33","#b68b59","#bc6621","#7f4b2b","#421609","#502e14","#b35e28"],"source":"upload","third_party":false,"wavebreak_id":null,"wavebreak_key":null,"licence_types":["standard"],"faces":false,"model_release":false,"license_reviewed_at":null,"plus":false,"standard":true,"editorial":false,"image_quality_judgment":null,"image_quality_judgment_required":null,"image_quality_prediction":4,"image_quality_prediction_updated_at":"2016-03-28T18:35:23.456Z"},"sort":[4153]},{"_index":"picfair-pic-development-picfair_development_201603_20160331-110500","_type":"pic","_id":"57276","_score":null,"_source":{"search_rank_score":0.8906262735582,"quality_ratio":0.95313136779098,"aspect_ratio":"landscape","formatted_tags":"rough guides travel asia india rajasthan udaipur street scenes portraits balloons balloon seller","price":25,"trending_rank":10,"image_quality_prediction_factor":16,"user":{"id":2850,"name":"Wilfred Seefeld","photo_url":"\/\/res.cloudinary.com\/fleetnation\/image\/upload\/c_fill,g_center,h_120,w_120\/v1395807021\/ziywtujneem4krqkh9mk.jpg","picusername":"Wilfred Seefeld"},"id":57276,"title":"THE BALLOON SELLER","authorised":true,"created_at":"2014-06-29T13:47:19.414Z","updated_at":"2016-03-29T22:13:09.967Z","height":3094,"model":"NIKON D7000","width":4543,"url":"the-balloon-seller","user_id":2850,"pic_views_count":4134,"caption":"Portrait of a boy selling balloons in the streets of Udaipur, Rajasthan, India","problem":false,"cloudinary_id":"v1404049629\/tbhsuuilzyhdls9k3zvx.jpg","trending_count":10,"starred":true,"recently_starred":true,"top_rank":0,"tweeted":true,"trending_score":null,"picked":true,"stock":false,"tags_all":"Rough Guides, Travel, Asia, India, Rajasthan, Udaipur, street scenes, portraits, balloons, balloon seller","deleted_at":null,"is_moderated":true,"starred_at":"2014-06-30T11:00:54.684Z","starred_email":true,"post_pics_count":2,"problem_reason":"","md5":null,"iptc":false,"partner_link_id":null,"state":"complete","app_version":1,"slug":null,"tags":["rough guides","travel","asia","india","rajasthan","udaipur","street scenes","portraits","balloons","balloon seller"],"colors":["#938d90","#0a0708","#a79e96","#99a7d8","#c6b9ce","#a699ae","#b1aab1","#e2dee3","#2c2022","#d2cfd5","#756e6f","#9793a9","#605657","#54281e","#343b50"],"source":"upload","third_party":false,"wavebreak_id":null,"wavebreak_key":null,"licence_types":["standard"],"faces":false,"model_release":false,"license_reviewed_at":null,"plus":false,"standard":true,"editorial":false,"image_quality_judgment":null,"image_quality_judgment_required":null,"image_quality_prediction":4,"image_quality_prediction_updated_at":"2016-03-29T22:13:56.833Z"},"sort":[4134]}]}]}}; // Sample repo from GitHub API docs
+	// This will need to be mapped/normalized to work with the
+	// component architecture
+	// Sample repo from GitHub API docs
+	// This will need to be mapped/normalized to work with the
+	// component architecture
+	exports["default"] = data;module.exports = exports["default"];
 
 	/* REACT HOT LOADER */ }).call(this); } finally { if (true) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = __webpack_require__(184); if (makeExportsHot(module, __webpack_require__(66))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "data.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)(module)))
