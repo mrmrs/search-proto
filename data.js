@@ -20,7 +20,7 @@ const data = {
         "_type": "pic",
         "_id": "12866",
         "_score": null,
-        "_source": {
+        "source": {
           "search_rank_score": 0.87506899977515,
           "quality_ratio": 0.87534499887575,
           "aspect_ratio": "landscape",
@@ -121,7 +121,7 @@ const data = {
         "_type": "pic",
         "_id": "30570",
         "_score": null,
-        "_source": {
+        "source": {
           "search_rank_score": 0.88415126919776,
           "quality_ratio": 0.92075634598879,
           "aspect_ratio": "landscape",
@@ -227,7 +227,7 @@ const data = {
         "_type": "pic",
         "_id": "34873",
         "_score": null,
-        "_source": {
+        "source": {
           "search_rank_score": 0.89404573458005,
           "quality_ratio": 0.97022867290023,
           "aspect_ratio": "landscape",
@@ -345,7 +345,7 @@ const data = {
         "_type": "pic",
         "_id": "32021",
         "_score": null,
-        "_source": {
+        "source": {
           "search_rank_score": 0.86127181098742,
           "quality_ratio": 0.80635905493712,
           "aspect_ratio": "landscape",
@@ -445,7 +445,7 @@ const data = {
         "_type": "pic",
         "_id": "31194",
         "_score": null,
-        "_source": {
+        "source": {
           "search_rank_score": 0.87277973597564,
           "quality_ratio": 0.86389867987819,
           "aspect_ratio": "landscape",
@@ -550,7 +550,7 @@ const data = {
         "_type": "pic",
         "_id": "34600",
         "_score": null,
-        "_source": {
+        "source": {
           "search_rank_score": 0.88169033898653,
           "quality_ratio": 0.90845169493264,
           "aspect_ratio": "landscape",
@@ -653,7 +653,7 @@ const data = {
         "_type": "pic",
         "_id": "23928",
         "_score": null,
-        "_source": {
+        "source": {
           "search_rank_score": 0.89113761801655,
           "quality_ratio": 0.95568809008276,
           "aspect_ratio": "portrait",
@@ -756,7 +756,7 @@ const data = {
         "_type": "pic",
         "_id": "152191",
         "_score": null,
-        "_source": {
+        "source": {
           "search_rank_score": 0.21069165807325,
           "quality_ratio": 0.55345829036627,
           "aspect_ratio": "landscape",
@@ -1284,7 +1284,7 @@ const data = {
         "_type": "pic",
         "_id": "26202",
         "_score": null,
-        "_source": {
+        "source": {
           "search_rank_score": 0.89608475861786,
           "quality_ratio": 0.98042379308928,
           "aspect_ratio": "landscape",
@@ -1414,7 +1414,7 @@ const data = {
         "_type": "pic",
         "_id": "17568",
         "_score": null,
-        "_source": {
+        "source": {
           "search_rank_score": 0.87920536795048,
           "quality_ratio": 0.89602683975242,
           "aspect_ratio": "landscape",
@@ -1528,7 +1528,7 @@ const data = {
         "_type": "pic",
         "_id": "19557",
         "_score": null,
-        "_source": {
+        "source": {
           "search_rank_score": 0.89969783755538,
           "quality_ratio": 0.99848918777692,
           "aspect_ratio": "portrait",
@@ -1644,7 +1644,7 @@ const data = {
         "_type": "pic",
         "_id": "33848",
         "_score": null,
-        "_source": {
+        "source": {
           "search_rank_score": 0.89140803042177,
           "quality_ratio": 0.95704015210884,
           "aspect_ratio": "landscape",
@@ -1773,7 +1773,7 @@ const data = {
         "_type": "pic",
         "_id": "20669",
         "_score": null,
-        "_source": {
+        "source": {
           "search_rank_score": 0.89537370191994,
           "quality_ratio": 0.97686850959972,
           "aspect_ratio": "landscape",
@@ -1871,7 +1871,7 @@ const data = {
         "_type": "pic",
         "_id": "29546",
         "_score": null,
-        "_source": {
+        "source": {
           "search_rank_score": 0.8799198474824,
           "quality_ratio": 0.89959923741201,
           "aspect_ratio": "landscape",
@@ -1971,7 +1971,7 @@ const data = {
         "_type": "pic",
         "_id": "11403",
         "_score": null,
-        "_source": {
+        "source": {
           "search_rank_score": 0.87917343538398,
           "quality_ratio": 0.89586717691992,
           "aspect_ratio": "square",
@@ -2083,7 +2083,7 @@ const data = {
         "_type": "pic",
         "_id": "6731",
         "_score": null,
-        "_source": {
+        "source": {
           "search_rank_score": 0.89585732650242,
           "quality_ratio": 0.97928663251208,
           "aspect_ratio": "landscape",
@@ -2196,7 +2196,7 @@ const data = {
         "_type": "pic",
         "_id": "12082",
         "_score": null,
-        "_source": {
+        "source": {
           "search_rank_score": 0.89161436127957,
           "quality_ratio": 0.95807180639786,
           "aspect_ratio": "landscape",
@@ -2297,7 +2297,7 @@ const data = {
         "_type": "pic",
         "_id": "31814",
         "_score": null,
-        "_source": {
+        "source": {
           "search_rank_score": 0.87756285536234,
           "quality_ratio": 0.8878142768117,
           "aspect_ratio": "landscape",
@@ -2400,7 +2400,7 @@ const data = {
         "_type": "pic",
         "_id": "29747",
         "_score": null,
-        "_source": {
+        "source": {
           "search_rank_score": 0.85629815561608,
           "quality_ratio": 0.78149077808041,
           "aspect_ratio": "landscape",
@@ -2498,7 +2498,7 @@ const data = {
         "_type": "pic",
         "_id": "6238",
         "_score": null,
-        "_source": {
+        "source": {
           "search_rank_score": 0.8649144642996,
           "quality_ratio": 0.82457232149801,
           "aspect_ratio": "landscape",
@@ -2601,7 +2601,7 @@ const data = {
         "_type": "pic",
         "_id": "20651",
         "_score": null,
-        "_source": {
+        "source": {
           "search_rank_score": 0.86606718546638,
           "quality_ratio": 0.83033592733192,
           "aspect_ratio": "square",
@@ -2707,7 +2707,7 @@ const data = {
         "_type": "pic",
         "_id": "6112",
         "_score": null,
-        "_source": {
+        "source": {
           "search_rank_score": 0.87768016393314,
           "quality_ratio": 0.88840081966571,
           "aspect_ratio": "landscape",
@@ -2808,7 +2808,7 @@ const data = {
         "_type": "pic",
         "_id": "15600",
         "_score": null,
-        "_source": {
+        "source": {
           "search_rank_score": 0.87658816316595,
           "quality_ratio": 0.88294081582974,
           "aspect_ratio": "landscape",
@@ -2907,7 +2907,7 @@ const data = {
         "_type": "pic",
         "_id": "17736",
         "_score": null,
-        "_source": {
+        "source": {
           "search_rank_score": 0.8891226483997,
           "quality_ratio": 0.94561324199849,
           "aspect_ratio": "landscape",
@@ -3008,7 +3008,7 @@ const data = {
         "_type": "pic",
         "_id": "26193",
         "_score": null,
-        "_source": {
+        "source": {
           "search_rank_score": 0.89608475861786,
           "quality_ratio": 0.98042379308928,
           "aspect_ratio": "portrait",
@@ -3138,7 +3138,7 @@ const data = {
         "_type": "pic",
         "_id": "41927",
         "_score": null,
-        "_source": {
+        "source": {
           "search_rank_score": 0.8906262735582,
           "quality_ratio": 0.95313136779098,
           "aspect_ratio": "landscape",
@@ -3242,7 +3242,7 @@ const data = {
         "_type": "pic",
         "_id": "75398",
         "_score": null,
-        "_source": {
+        "source": {
           "search_rank_score": 0.9803640521245,
           "quality_ratio": 0.90182026062248,
           "aspect_ratio": "landscape",
@@ -3355,7 +3355,7 @@ const data = {
         "_type": "pic",
         "_id": "20291",
         "_score": null,
-        "_source": {
+        "source": {
           "search_rank_score": 0.85900486314793,
           "quality_ratio": 0.79502431573966,
           "aspect_ratio": "landscape",
@@ -3453,7 +3453,7 @@ const data = {
         "_type": "pic",
         "_id": "29734",
         "_score": null,
-        "_source": {
+        "source": {
           "search_rank_score": 0.89595228281365,
           "quality_ratio": 0.97976141406823,
           "aspect_ratio": "landscape",
@@ -3565,7 +3565,7 @@ const data = {
         "_type": "pic",
         "_id": "57276",
         "_score": null,
-        "_source": {
+        "source": {
           "search_rank_score": 0.8906262735582,
           "quality_ratio": 0.95313136779098,
           "aspect_ratio": "landscape",

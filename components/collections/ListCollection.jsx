@@ -7,7 +7,7 @@ const ListCollection = ({ items, ...props }) => (
     <ul className='black'>
       {items.map((item, i) => (
         <li key={i} className='black'>
-          <span children='{item.title}' className='db b'/>
+          <span children={item.source.title} className='db b'/>
         </li>
       ))}
     </ul>
