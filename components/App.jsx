@@ -10,6 +10,7 @@ import palettes from '../color-palettes'
 import Headers, { headers } from './Headers'
 import Footers, { footers } from './Footers'
 import Collections, { collections } from './Collections'
+import SearchBars, { searchbars } from './SearchBars'
 
 import Heading from './Heading'
 import Text from './Text'
@@ -44,6 +45,7 @@ export default class App extends React.Component {
       header: 0,
       nav: 0,
       collection: 0,
+      searchbar: 0,
       footer: 0,
       dark: false
     }
@@ -68,6 +70,7 @@ export default class App extends React.Component {
       header: random(headers.length - 1),
       footer: random(footers.length - 1),
       collection: random(collections.length - 1),
+      searchbar: random(searchbars.length - 1),
       // randoms: Object.keys(this.props).map((key, i) =>)
       // dark
     }
@@ -77,7 +80,7 @@ export default class App extends React.Component {
   render() {
 
     const { collections } = this.props
-    const { colors, header, nav, collection, footer, dark } = this.state
+    const { colors, searchbar, header, nav, collection, footer, dark } = this.state
 
     const reverse = random(1) == 1
 
@@ -94,6 +97,7 @@ export default class App extends React.Component {
         }}>
         <style dangerouslySetInnerHTML={{ __html: css }} />
         <Headers i={0} {...this.props} />
+        <SearchBars i={0} {...this.props} />
         <Collections i={0} {...collections[0]} />
         <Footers i={0} {...this.props} />
       </div>

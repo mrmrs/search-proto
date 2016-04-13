@@ -7,9 +7,9 @@ import GridCollection from './collections/GridCollection'
 import ChromelessGridCollection from './collections/ChromelessGridCollection'
 
 export const collections = [
+  GridCollection,
   ListCollection,
   DetailListCollection,
-  GridCollection,
   ChromelessGridCollection,
 ]
 
