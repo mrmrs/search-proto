@@ -39,8 +39,8 @@ function getColor () {
 
 export default class App extends React.Component {
 
-  showGrid () { this.setState({ collection: 1 }) }
-  showList () { this.setState({ collection: 0 }) }
+  showGrid () { this.setState({ collection: 0 }) }
+  showList () { this.setState({ collection: 1 }) }
 
   constructor () {
     super()
@@ -95,11 +95,15 @@ export default class App extends React.Component {
     const css = `
       a { color: ${colors.primary}; }
       .svg-fill { fill: currentColor; }
-      .b--color { border-color: ${colors.border};
+      .b--color { border-color: ${colors.border}; }
       .bg-color { background-color: ${colors.base}; }
       .color    { color: ${colors.primary}; }
       .bg-transparent { background-color: transparent; }
       .focus-transparent:focus { outline: 0; }
+      .bg-blue { background-color: #0074D9!important; }
+      .bg-twitter { background-color: #55acee; }
+      .twitter { color: #55acee; }
+      .min-w3 { min-width: 7rem; }
     `
 
     return (
@@ -110,7 +114,7 @@ export default class App extends React.Component {
         <style dangerouslySetInnerHTML={{ __html: css }} />
         <Headers i={0} {...this.props} />
         <SearchBars i={0} {...this.props} showGrid={this.showGrid} showList={this.showList} />
-        <Collections i={0} {...collectionsList[0]} />
+        <Collections i={collection} {...collectionsList[0]} />
         <Footers i={0} {...this.props} />
       </div>
 

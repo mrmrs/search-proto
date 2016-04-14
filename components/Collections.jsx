@@ -9,8 +9,8 @@ import ChromelessTightGridCollection from './collections/ChromelessTightGridColl
 
 export const collections = [
   GridCollection,
-  ListCollection,
   DetailListCollection,
+  ListCollection,
   ChromelessGridCollection,
   ChromelessTightGridCollection
 ]

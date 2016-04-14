@@ -6,13 +6,14 @@ const GlobalSearchBar = ({ header,showGrid, showList, ...props }) => (
       <label className="db mb2 b f6">Find the perfect photo</label>
     <div className='border-box dib pa1 pl2 pr4 br2 bg-white nowrap box ba b--color'>
       <svg
-        className="gray dib svg-fill js-geomicon geomicon mw1"
+        className="gray dib svg-fill js-geomicon geomicon mw1 relative"
+        style={{top: '2px'}}
         data-icon="search" viewBox="0 0 32 32">
         <title>search icon</title>
         <path d="M12 0 A12 12 0 0 0 0 12 A12 12 0 0 0 12 24 A12 12 0 0 0 18.5 22.25 L28 32 L32 28 L22.25 18.5 A12 12 0 0 0 24 12 A12 12 0 0 0 12 0 M12 4 A8 8 0 0 1 12 20 A8 8 0 0 1 12 4"></path>
       </svg>
-      <input className='bg-white border-box ph3 pv2 input-reset bn dib' type='text' placeholder="I'm looking for..."/>
-      <input type="submit" value="Search" className="dim bg-color br2 focus-transparent input-resetba b--color" />
+      <input className='bg-white border-box ph3 pv2 input-reset focus-transparent bn dib' type='text' placeholder="I'm looking for..."/>
+      <input type="submit" value="Search" className="f6 dim bg-blue white br2 focus-transparent input-reset ba b--color" />
     </div>
     <div className="mt4">
       <a href="#" className='dib mw2 dim link mr2' onClick={showGrid}>
